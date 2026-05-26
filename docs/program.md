@@ -17,23 +17,34 @@ Un slot est un créneau horaire défini par :
 ## Implémentation Technique (Clean Architecture)
 
 ### 1. Couche Domaine (`src/Domain`)
-- **Entité :** `ProgramSlot` (POPO) encapsulant les données métier (Heures, Jour, Thème).
-- **Repository :** `ProgramSlotRepositoryInterface` définissant les opérations de persistance.
+- **Entité :** `ProgramSlot` (POPO) encapsulant les données métier (Heures, Jour, Libellé, Thème).
+- **Entité :** `Theme` (POPO) définissant une catégorie (Label, Couleur).
+- **Repository :** `ProgramSlotRepositoryInterface` et `ThemeRepositoryInterface`.
 
 ### 2. Couche Infrastructure (`src/Infrastructure`)
-- **Mapping Doctrine :** Configuration XML dans `config/doctrine/ProgramSlot.orm.xml` pour découpler le domaine de la base de données.
-- **Repository :** `DoctrineProgramSlotRepository` implémentant l'interface du domaine via Doctrine ORM.
+- **Mapping Doctrine :** 
+    - `config/doctrine/ProgramSlot.orm.xml`
+    - `config/doctrine/Theme.orm.xml`
+- **Repository :** Implémentations Doctrine concrètes utilisant `ServiceEntityRepository`.
 
 ### 3. Couche Interface Utilisateur
-- **API (Symfony) :** `ProgramSlotController` fournissant des endpoints REST (`GET`, `POST`, `PUT`, `DELETE`).
+- **API (Symfony) :** 
+    - `ProgramSlotController` : `/api/programs` (CRUD).
+    - `ThemeController` : `/api/themes` (GET/POST).
 - **Frontend (React) :** 
-    - `ProgramManager` : Composant principal gérant l'état et l'affichage.
-    - **Grille Hebdomadaire :** Affichage visuel 24h/7j avec CSS Grid.
-    - **Range Picker :** Utilisation de curseurs (sliders) pour une sélection précise des horaires sans saisie manuelle.
-    - **Thématisation :** Couleurs dynamiques via Tailwind CSS.
+    - `ProgramManager` : Grille interactive avec thème "Dark Slate".
+    - `ThemePicker` : Gestionnaire de thématiques intégré permettant la création à la volée.
+    - **Range Picker :** Sélection temporelle intuitive via sliders.
 
-## Utilisation
-1. Accéder à l'onglet **Programmes**.
-2. Cliquer sur un créneau existant pour le modifier ou sur "+ Nouveau" pour en créer un.
-3. Utiliser les sliders pour ajuster les heures de début et de fin.
-4. Enregistrer pour synchroniser avec la base de données.
+## Gestion des Thématiques
+Les thématiques ne sont plus statiques. L'utilisateur peut :
+- Choisir parmi les thèmes existants.
+- Créer un nouveau thème avec un libellé et une couleur personnalisée directement depuis la modale de création d'un programme.
+- Les couleurs sont synchronisées visuellement sur la grille hebdomadaire.
+
+## Installation / Mise à jour
+Suite aux changements de structure, il est impératif de mettre à jour la base de données :
+```bash
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+```
