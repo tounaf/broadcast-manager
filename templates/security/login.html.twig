@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <script>
+        window.csrf_token = "{{ csrf_token('authenticate') }}";
+        window.login_error = "{{ error ? error.messageKey|trans(error.messageData, 'security') : '' }}";
+        window.last_username = "{{ last_username }}";
+        window.user_data = null;
+    </script>
+    <div id="root"></div>
+{% endblock %}

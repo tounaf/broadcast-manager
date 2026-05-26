@@ -10,7 +10,7 @@ interface ProgramSlotRepositoryInterface
     public function remove(ProgramSlot $programSlot): void;
     public function findById(int $id): ?ProgramSlot;
     /** @return ProgramSlot[] */
-    public function findAll(): array;
+    public function findAll();
     /** @return ProgramSlot[] */
     public function findByDay(string $dayOfWeek): array;
 }

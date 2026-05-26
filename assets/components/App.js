@@ -1,58 +1,125 @@
 import React, { useState } from 'react';
+import Sidebar from './UI/Sidebar';
+import Header from './UI/Header';
 import ProgramManager from './Program/ProgramManager';
+import Login from './Login';
+import UserManagement from './UserManagement';
+import RoleManagement from './RoleManagement';
+import Profile from './Profile';
 
 const App = () => {
+    const [user, setUser] = useState(window.user_data);
     const [view, setView] = useState('dashboard');
 
-    if (view === 'programs') {
-        return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 font-sans">
-                <ProgramManager onBack={() => setView('dashboard')} />
-            </div>
-        );
+    if (!user) {
+        return <Login error={window.login_error} lastUsername={window.last_username} />;
     }
 
+    const renderContent = () => {
+        switch (view) {
+            case 'programs':
+                return <ProgramManager onBack={() => setView('dashboard')} />;
+            case 'users':
+                return <UserManagement />;
+            case 'roles':
+                return <RoleManagement />;
+            case 'profile':
+                return <Profile user={user} />;
+            default:
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                        <DashboardCard
+                            title="Programmes"
+                            description="Gérez la structure de votre grille hebdomadaire."
+                            icon="📅"
+                            color="blue"
+                            onClick={() => setView('programs')}
+                        />
+                        <DashboardCard
+                            title="Utilisateurs"
+                            description="Gérez les accès et les comptes utilisateurs."
+                            icon="👥"
+                            color="green"
+                            onClick={() => setView('users')}
+                        />
+                        <DashboardCard
+                            title="Rôles & Droits"
+                            description="Définissez les droits d'accès aux routes."
+                            icon="🔐"
+                            color="purple"
+                            onClick={() => setView('roles')}
+                        />
+                        <DashboardCard
+                            title="Playlists"
+                            description="Planifiez le contenu réel des émissions."
+                            icon="🎬"
+                            color="green"
+                        />
+                        <DashboardCard
+                            title="Médiathèque"
+                            description="Accédez au catalogue des films et vidéos."
+                            icon="🎞️"
+                            color="purple"
+                        />
+                        <DashboardCard
+                            title="Publicité"
+                            description="Gérez les spots et les contrats clients."
+                            icon="📢"
+                            color="orange"
+                        />
+                    </div>
+                );
+        }
+    };
+
+    const getViewTitle = () => {
+        const titles = {
+            dashboard: 'Tableau de Bord',
+            programs: 'Gestion des Programmes',
+            users: 'Gestion des Utilisateurs',
+            roles: 'Gestion des Droits',
+            profile: 'Mon Profil',
+        };
+        return titles[view] || 'Dashboard';
+    };
+
+    const handleLogout = () => {
+        window.location.href = '/logout';
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
-            <header className="mb-8 text-center">
-                <h1 className="text-4xl font-extrabold text-blue-600 mb-2">Broadcast Manager</h1>
-                <p className="text-lg text-gray-600">Système de gestion Digitalisé TV & RADIO</p>
-            </header>
-            
-            <main className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full">
-                <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
-                    <h2 className="text-xl font-bold mb-2">Programmes</h2>
-                    <p className="text-gray-600 mb-4">Gérez la structure de votre grille hebdomadaire.</p>
-                    <button 
-                        onClick={() => setView('programs')}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                    >
-                        Ouvrir
-                    </button>
-                </div>
-                
-                <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
-                    <h2 className="text-xl font-bold mb-2">Playlists</h2>
-                    <p className="text-gray-600 mb-4">Planifiez le contenu réel des émissions.</p>
-                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Ouvrir</button>
-                </div>
-                
-                <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
-                    <h2 className="text-xl font-bold mb-2">Médiathèque</h2>
-                    <p className="text-gray-600 mb-4">Accédez au catalogue des films et vidéos.</p>
-                    <button className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition">Parcourir</button>
-                </div>
-                
-                <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-orange-500">
-                    <h2 className="text-xl font-bold mb-2">Publicité</h2>
-                    <p className="text-gray-600 mb-4">Gérez les spots et les contrats clients.</p>
-                    <button className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition">Gérer</button>
-                </div>
-            </main>
-            
-            <footer className="mt-12 text-gray-500 text-sm">
-                &copy; 2026 Broadcast Manager - Madagascar
-            </footer>
+        <div className="flex min-h-screen bg-gray-100 font-sans">
+            <Sidebar currentView={view} onViewChange={setView} onLogout={handleLogout} />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <Header title={getViewTitle()} user={user} />
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+                    {renderContent()}
+                </main>
+            </div>
+        </div>
+    );
+};
+
+const DashboardCard = ({ title, description, icon, color, onClick }) => {
+    const colors = {
+        blue: 'border-blue-500',
+        green: 'border-green-500',
+        purple: 'border-purple-500',
+        orange: 'border-orange-500',
+        cyan: 'border-cyan-500',
+    };
+
+    return (
+        <div
+            onClick={onClick}
+            className={`bg-white p-6 rounded-lg shadow-sm border-t-4 ${colors[color]} hover:shadow-md transition cursor-pointer`}
+        >
+            <div className="text-3xl mb-4">{icon}</div>
+            <h2 className="text-xl font-bold mb-2 text-gray-800">{title}</h2>
+            <p className="text-gray-600 mb-4 text-sm">{description}</p>
+            <div className="text-blue-600 font-medium text-sm flex items-center">
+                Ouvrir <span className="ml-1">→</span>
+            </div>
         </div>
     );
 };

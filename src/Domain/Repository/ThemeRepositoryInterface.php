@@ -10,5 +10,5 @@ interface ThemeRepositoryInterface
     public function remove(Theme $theme): void;
     public function findById(int $id): ?Theme;
     /** @return Theme[] */
-    public function findAll(): array;
+    public function findAll();
 }
