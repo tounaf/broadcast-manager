@@ -6,6 +6,7 @@ import Login from './Login';
 import UserManagement from './UserManagement';
 import RoleManagement from './RoleManagement';
 import Profile from './Profile';
+import PlaylistManager from './Playlist/PlaylistManager';
 
 const App = () => {
     const [user, setUser] = useState(window.user_data);
@@ -18,7 +19,9 @@ const App = () => {
     const renderContent = () => {
         switch (view) {
             case 'programs':
-                return <ProgramManager onBack={() => setView('dashboard')} />;
+                return <ProgramManager />;
+            case 'playlists':
+                return <PlaylistManager />;
             case 'users':
                 return <UserManagement />;
             case 'roles':
@@ -36,10 +39,17 @@ const App = () => {
                             onClick={() => setView('programs')}
                         />
                         <DashboardCard
+                            title="Playlists"
+                            description="Planifiez le contenu réel des émissions."
+                            icon="🎬"
+                            color="green"
+                            onClick={() => setView('playlists')}
+                        />
+                        <DashboardCard
                             title="Utilisateurs"
                             description="Gérez les accès et les comptes utilisateurs."
                             icon="👥"
-                            color="green"
+                            color="cyan"
                             onClick={() => setView('users')}
                         />
                         <DashboardCard
@@ -50,22 +60,16 @@ const App = () => {
                             onClick={() => setView('roles')}
                         />
                         <DashboardCard
-                            title="Playlists"
-                            description="Planifiez le contenu réel des émissions."
-                            icon="🎬"
-                            color="green"
-                        />
-                        <DashboardCard
                             title="Médiathèque"
                             description="Accédez au catalogue des films et vidéos."
                             icon="🎞️"
-                            color="purple"
+                            color="orange"
                         />
                         <DashboardCard
                             title="Publicité"
                             description="Gérez les spots et les contrats clients."
                             icon="📢"
-                            color="orange"
+                            color="red"
                         />
                     </div>
                 );
@@ -76,6 +80,7 @@ const App = () => {
         const titles = {
             dashboard: 'Tableau de Bord',
             programs: 'Gestion des Programmes',
+            playlists: 'Planification des Playlists',
             users: 'Gestion des Utilisateurs',
             roles: 'Gestion des Droits',
             profile: 'Mon Profil',
@@ -107,6 +112,7 @@ const DashboardCard = ({ title, description, icon, color, onClick }) => {
         purple: 'border-purple-500',
         orange: 'border-orange-500',
         cyan: 'border-cyan-500',
+        red: 'border-red-500',
     };
 
     return (

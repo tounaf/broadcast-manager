@@ -4,6 +4,7 @@ const Sidebar = ({ currentView, onViewChange, onLogout }) => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: '📊' },
         { id: 'programs', label: 'Programmes', icon: '📅' },
+        { id: 'playlists', label: 'Playlists', icon: '🎬' },
         { id: 'users', label: 'Utilisateurs', icon: '👥' },
         { id: 'roles', label: 'Rôles & Droits', icon: '🔐' },
         { id: 'profile', label: 'Mon Profil', icon: '👤' },

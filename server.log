@@ -1,0 +1,49 @@
+[Wed May 27 03:28:15 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Wed May 27 03:28:18 2026] [::1]:32920 Accepted
+[Wed May 27 03:28:18 2026] [::1]:32920 [200]: GET /login
+[Wed May 27 03:28:18 2026] [::1]:32920 Closing
+[Wed May 27 03:28:18 2026] [::1]:32936 Accepted
+[Wed May 27 03:28:18 2026] [::1]:32952 Accepted
+[Wed May 27 03:28:18 2026] [::1]:32936 [200]: GET /build/app.32309eb0.css
+[Wed May 27 03:28:18 2026] [::1]:32952 [200]: GET /build/runtime.6f4bd0a9.js
+[Wed May 27 03:28:18 2026] [::1]:32936 Closing
+[Wed May 27 03:28:18 2026] [::1]:32952 Closing
+[Wed May 27 03:28:18 2026] [::1]:32960 Accepted
+[Wed May 27 03:28:18 2026] [::1]:32960 [200]: GET /build/605.4d9ad611.js
+[Wed May 27 03:28:18 2026] [::1]:32960 Closing
+[Wed May 27 03:28:18 2026] [::1]:32962 Accepted
+[Wed May 27 03:28:18 2026] [::1]:32962 [200]: GET /build/app.0fc6886c.js
+[Wed May 27 03:28:18 2026] [::1]:32962 Closing
+[Wed May 27 03:28:19 2026] [::1]:32964 Accepted
+[Wed May 27 03:28:20 2026] [::1]:32964 [302]: POST /login
+[Wed May 27 03:28:20 2026] [::1]:32964 Closing
+[Wed May 27 03:28:20 2026] [::1]:32976 Accepted
+[Wed May 27 03:28:20 2026] [::1]:32976 [200]: GET /
+[Wed May 27 03:28:20 2026] [::1]:32976 Closing
+[Wed May 27 03:28:20 2026] [::1]:32978 Accepted
+[Wed May 27 03:28:20 2026] [::1]:32992 Accepted
+[Wed May 27 03:28:20 2026] [::1]:32978 [200]: GET /build/app.32309eb0.css
+[Wed May 27 03:28:20 2026] [::1]:32992 [200]: GET /build/runtime.6f4bd0a9.js
+[Wed May 27 03:28:20 2026] [::1]:32978 Closing
+[Wed May 27 03:28:20 2026] [::1]:32992 Closing
+[Wed May 27 03:28:20 2026] [::1]:33000 Accepted
+[Wed May 27 03:28:20 2026] [::1]:33012 Accepted
+[Wed May 27 03:28:20 2026] [::1]:33000 [200]: GET /build/605.4d9ad611.js
+[Wed May 27 03:28:20 2026] [::1]:33012 [200]: GET /build/app.0fc6886c.js
+[Wed May 27 03:28:20 2026] [::1]:33000 Closing
+[Wed May 27 03:28:20 2026] [::1]:33012 Closing
+[Wed May 27 03:28:22 2026] [::1]:33026 Accepted
+[Wed May 27 03:28:22 2026] [::1]:33026 [200]: GET /api/playlists/daily?date=2026-05-27
+[Wed May 27 03:28:22 2026] [::1]:33026 Closing
+[Wed May 27 03:28:24 2026] [::1]:33040 Accepted
+[Wed May 27 03:28:24 2026] [::1]:33040 [200]: GET /api/playlists/daily?date=2026-05-25
+[Wed May 27 03:28:24 2026] [::1]:33040 Closing
+[Wed May 27 03:28:26 2026] [::1]:33050 Accepted
+[Wed May 27 03:28:26 2026] [::1]:33050 [200]: GET /api/medias
+[Wed May 27 03:28:26 2026] [::1]:33050 Closing
+[Wed May 27 03:28:30 2026] [::1]:39838 Accepted
+[Wed May 27 03:28:30 2026] [::1]:39838 [200]: POST /api/playlists/1
+[Wed May 27 03:28:30 2026] [::1]:39838 Closing
+[Wed May 27 03:28:30 2026] [::1]:39850 Accepted
+[Wed May 27 03:28:30 2026] [::1]:39850 [200]: GET /api/playlists/daily?date=2026-05-25
+[Wed May 27 03:28:30 2026] [::1]:39850 Closing
