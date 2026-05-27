@@ -1,14 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Button from '../UI/Button';
 import MediaLibrary from './MediaLibrary';
 
 const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
+    const libraryRef = useRef(null);
     const [items, setItems] = useState(slot.playlist.items || []);
     const [saving, setSaving] = useState(false);
 
     const totalDuration = items.reduce((sum, item) => sum + item.media.duration, 0);
     const remaining = slot.slot.duration - totalDuration;
     const isOver = remaining < 0;
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        const data = event.dataTransfer.getData('application/json');
+        if (!data) return;
+
+        try {
+            const media = JSON.parse(data);
+            console.log('[PlaylistEditor] drop media', media);
+            handleAddMedia(media);
+        } catch (error) {
+            console.error('Impossible d’ajouter le média depuis le glisser-déposer', error);
+        }
+    };
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+    };
 
     const formatDuration = (sec) => {
         const absSec = Math.abs(sec);
@@ -19,6 +38,7 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
     };
 
     const handleAddMedia = (media) => {
+        console.log('[PlaylistEditor] handleAddMedia', media);
         setItems([...items, { media, position: items.length }]);
     };
 
@@ -42,6 +62,10 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
             setSaving(false);
             onSave();
         });
+    };
+
+    const handleOpenLibrary = () => {
+        libraryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
 
     return (
@@ -74,7 +98,14 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                <div
+                    className="flex-1 overflow-y-auto space-y-3 pr-2"
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                >
+                    <div className="mb-3 text-sm text-gray-500">
+                        Glissez un média depuis la médiathèque ici, ou cliquez sur un média pour l’ajouter.
+                    </div>
                     {items.map((item, index) => (
                         <div key={index} className="flex items-center gap-3 bg-white p-3 rounded-lg border shadow-sm group">
                             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-xs font-bold text-gray-400">
@@ -85,6 +116,7 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
                                 <p className="text-[10px] text-gray-500 uppercase">{item.media.type} • {formatDuration(item.media.duration)}</p>
                             </div>
                             <button
+                                type="button"
                                 onClick={() => handleRemoveItem(index)}
                                 className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded transition"
                             >
@@ -93,15 +125,20 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
                         </div>
                     ))}
                     {items.length === 0 && (
-                        <div className="h-40 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 italic">
-                            Glissez ou cliquez sur un média pour l'ajouter
-                        </div>
+                        <button
+                            type="button"
+                            onClick={handleOpenLibrary}
+                            className="h-40 w-full border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 italic transition hover:border-blue-400 hover:text-blue-700"
+                        >
+                            Cliquez ici pour ouvrir la médiathèque et ajouter un média
+                        </button>
                     )}
                 </div>
             </div>
 
             {/* Right side: Media Library */}
             <div className="w-80 bg-white border-l p-4 flex flex-col shadow-xl">
+                <div ref={libraryRef} className="-mt-2" />
                 <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                     <span>📚</span> Médiathèque
                 </h3>

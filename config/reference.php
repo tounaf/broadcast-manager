@@ -938,20 +938,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     intercept_redirects?: bool|Param, // Default: false
  *     excluded_ajax_paths?: scalar|Param|null, // Default: "^/((index|app(_[\\w]+)?)\\.php/)?_wdt"
  * }
- * @psalm-type StimulusConfig = array{
- *     controller_paths?: list<scalar|Param|null>,
- *     controllers_json?: scalar|Param|null, // Default: "%kernel.project_dir%/assets/controllers.json"
- * }
- * @psalm-type TurboConfig = array{
- *     broadcast?: bool|array{
- *         enabled?: bool|Param, // Default: true
- *         entity_template_prefixes?: list<scalar|Param|null>,
- *         doctrine_orm?: bool|array{ // Enable the Doctrine ORM integration
- *             enabled?: bool|Param, // Default: true
- *         },
- *     },
- *     default_transport?: scalar|Param|null, // Default: "default"
- * }
  * @psalm-type TwigExtraConfig = array{
  *     cache?: bool|array{
  *         enabled?: bool|Param, // Default: false
@@ -1473,8 +1459,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine?: DoctrineConfig,
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     twig?: TwigConfig,
- *     stimulus?: StimulusConfig,
- *     turbo?: TurboConfig,
  *     twig_extra?: TwigExtraConfig,
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
@@ -1489,8 +1473,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         debug?: DebugConfig,
  *         twig?: TwigConfig,
  *         web_profiler?: WebProfilerConfig,
- *         stimulus?: StimulusConfig,
- *         turbo?: TurboConfig,
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
@@ -1505,8 +1487,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine?: DoctrineConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         twig?: TwigConfig,
- *         stimulus?: StimulusConfig,
- *         turbo?: TurboConfig,
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
@@ -1521,8 +1501,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         twig?: TwigConfig,
  *         web_profiler?: WebProfilerConfig,
- *         stimulus?: StimulusConfig,
- *         turbo?: TurboConfig,
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
@@ -1608,7 +1586,7 @@ namespace Symfony\Component\Routing\Loader\Configurator;
  * @psalm-type AliasConfig = array{
  *     alias: string,
  *     deprecated?: array{package:string, version:string, message?:string},
- * }
+ * }
  * @psalm-type RoutesConfig = array{
  *     "when@dev"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     "when@prod"?: array<string, RouteConfig|ImportConfig|AliasConfig>,

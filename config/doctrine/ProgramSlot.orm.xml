@@ -10,6 +10,7 @@
         </id>
         <field name="dayOfWeek" type="string" length="20"/>
         <field name="label" type="string" length="255"/>
+        <field name="date" type="date_immutable" nullable="true"/>
         <field name="startTime" type="time_immutable"/>
         <field name="endTime" type="time_immutable"/>
         <field name="theme" type="string" length="100"/>

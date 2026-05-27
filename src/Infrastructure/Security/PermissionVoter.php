@@ -5,6 +5,7 @@ namespace App\Infrastructure\Security;
 use App\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class PermissionVoter extends Voter
@@ -23,14 +24,9 @@ class PermissionVoter extends Voter
         return $attribute === self::ACCESS;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
-
-        // FOR TESTING: allow everything if it is the admin user we created
-        if ($user instanceof User && $user->getUsername() === "admin") {
-            return true;
-        }
 
         if (!$user instanceof User) {
             return false;
@@ -46,6 +42,7 @@ class PermissionVoter extends Voter
             return true;
         }
 
+        // Check if any of the user's roles have the permission for this route
         foreach ($user->getUserRoles() as $role) {
             foreach ($role->getPermissions() as $permission) {
                 if ($permission->getName() === $routeName) {
@@ -54,6 +51,7 @@ class PermissionVoter extends Voter
             }
         }
 
+        // Always allow dashboard and login-related routes to avoid locking out users
         if ($routeName === 'app_dashboard' || str_starts_with($routeName, 'app_login')) {
             return true;
         }

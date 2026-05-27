@@ -25,6 +25,7 @@ class ProgramSlotController extends AbstractController
         $data = array_map(fn(ProgramSlot $slot) => [
             'id' => $slot->getId(),
             'dayOfWeek' => $slot->getDayOfWeek(),
+            'date' => $slot->getDate()?->format('Y-m-d'),
             'label' => $slot->getLabel(),
             'startTime' => $slot->getStartTime()->format('H:i'),
             'endTime' => $slot->getEndTime()->format('H:i'),
@@ -45,7 +46,8 @@ class ProgramSlotController extends AbstractController
             $data['label'] ?? 'Sans titre',
             new \DateTimeImmutable($data['startTime']),
             new \DateTimeImmutable($data['endTime']),
-            $data['theme']
+            $data['theme'],
+            isset($data['date']) ? new \DateTimeImmutable($data['date']) : null
         );
 
         $this->repository->save($slot);
@@ -71,6 +73,7 @@ class ProgramSlotController extends AbstractController
         if (isset($data['startTime'])) $slot->setStartTime(new \DateTimeImmutable($data['startTime']));
         if (isset($data['endTime'])) $slot->setEndTime(new \DateTimeImmutable($data['endTime']));
         if (isset($data['theme'])) $slot->setTheme($data['theme']);
+        if (isset($data['date'])) $slot->setDate(new \DateTimeImmutable($data['date']));
         if (isset($data['isValidated'])) $data['isValidated'] ? $slot->validate() : $slot->invalidate();
 
         $this->repository->save($slot);

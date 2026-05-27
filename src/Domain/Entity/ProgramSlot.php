@@ -10,6 +10,7 @@ class ProgramSlot
     private \DateTimeImmutable $startTime;
     private \DateTimeImmutable $endTime;
     private string $theme;
+    private ?\DateTimeImmutable $date = null;
     private bool $isValidated = false;
 
     public function __construct(
@@ -17,13 +18,15 @@ class ProgramSlot
         string $label,
         \DateTimeImmutable $startTime,
         \DateTimeImmutable $endTime,
-        string $theme
+        string $theme,
+        ?\DateTimeImmutable $date = null
     ) {
         $this->dayOfWeek = $dayOfWeek;
         $this->label = $label;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
         $this->theme = $theme;
+        $this->date = $date;
     }
 
     public function getId(): ?int
@@ -79,6 +82,16 @@ class ProgramSlot
     public function setTheme(string $theme): void
     {
         $this->theme = $theme;
+    }
+
+    public function getDate(): ?\DateTimeImmutable
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeImmutable $date): void
+    {
+        $this->date = $date;
     }
 
     public function isValidated(): bool
