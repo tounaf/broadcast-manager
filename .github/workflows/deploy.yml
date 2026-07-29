@@ -40,6 +40,8 @@ jobs:
           echo "APP_SECRET=${{ secrets.APP_SECRET }}" >> .env
           echo "APP_DEBUG=false" >> .env
           echo "APP_URL=${{ secrets.APP_URL }}" >> .env
+          echo "DEFAULT_URI=https://tv-programm.fva-vitaonyasany.mg" >> .env
+          echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env
           echo "" >> .env
           echo "DATABASE_URL=mysql://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_DATABASE }}" >> .env
 
