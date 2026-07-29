@@ -4,6 +4,7 @@ namespace App\UserInterface\Controller\Api;
 
 use App\Domain\Entity\Media;
 use App\Domain\Repository\MediaRepositoryInterface;
+use App\Domain\Repository\PlaylistRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class MediaController extends AbstractController
 {
     public function __construct(
-        private MediaRepositoryInterface $mediaRepository
+        private MediaRepositoryInterface $mediaRepository,
+        private PlaylistRepositoryInterface $playlistRepository
     ) {}
 
     #[Route('', name: 'index', methods: ['GET'])]
@@ -22,6 +24,9 @@ class MediaController extends AbstractController
     {
         $medias = $this->mediaRepository->findAll();
         $type = $request->query->get('type');
+
+        $today = new \DateTimeImmutable('today');
+        $broadcastedMediaIds = $this->playlistRepository->findBroadcastedMediaIdsBefore($today);
 
         $data = [];
         foreach ($medias as $media) {
@@ -33,6 +38,7 @@ class MediaController extends AbstractController
                 'title' => $media->getTitle(),
                 'duration' => $media->getDuration(),
                 'type' => $media->getType(),
+                'is_broadcasted' => in_array($media->getId(), $broadcastedMediaIds, true),
             ];
         }
         return $this->json($data);
