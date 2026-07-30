@@ -48,14 +48,12 @@ class DoctrinePlaylistRepository extends ServiceEntityRepository implements Play
         return $this->findBy(['date' => $date]);
     }
 
-    public function findBroadcastedMediaIdsBefore(\DateTimeImmutable $date): array
+    public function findBroadcastedMediaIds(): array
     {
         $qb = $this->createQueryBuilder('p')
             ->select('DISTINCT m.id')
             ->join('p.items', 'pi')
-            ->join('pi.media', 'm')
-            ->where('p.date < :date')
-            ->setParameter('date', $date);
+            ->join('pi.media', 'm');
 
         $result = $qb->getQuery()->getScalarResult();
         return array_column($result, 'id');
