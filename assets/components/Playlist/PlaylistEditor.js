@@ -118,9 +118,10 @@ const PlaylistEditor = ({ slot, date, onSave, onCancel }) => {
                             <button
                                 type="button"
                                 onClick={() => handleRemoveItem(index)}
-                                className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded transition"
+                                className="p-2 text-red-500 hover:bg-red-50 rounded border border-red-200 transition flex items-center gap-1 text-xs font-semibold"
+                                title="Retirer ce média de la playlist"
                             >
-                                🗑️
+                                🗑️ <span className="hidden sm:inline">Retirer</span>
                             </button>
                         </div>
                     ))}

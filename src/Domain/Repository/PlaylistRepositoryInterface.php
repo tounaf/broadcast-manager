@@ -12,4 +12,8 @@ interface PlaylistRepositoryInterface
     public function findById(int $id): ?Playlist;
     public function findBySlotAndDate(ProgramSlot $slot, \DateTimeImmutable $date): ?Playlist;
     public function findByDate(\DateTimeImmutable $date): array;
+    /**
+     * @return int[]
+     */
+    public function findBroadcastedMediaIds(): array;
 }

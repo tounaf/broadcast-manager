@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
               -czf avas.tar.gz .
           set -e
           sshpass -p "${{ secrets.SSH_PASSWORD }}" scp -P "${{ secrets.SSH_PORT }}" -o StrictHostKeyChecking=no avas.tar.gz "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/avas.tar.gz"
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -p "${{ secrets.SSH_PORT }}" -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "find '${{ secrets.WORK_DIR }}' -mindepth 1 ! -path '${{ secrets.WORK_DIR }}/var' ! -path '${{ secrets.WORK_DIR }}/var/*' -exec rm -rf {} + && tar -xzf ~/avas.tar.gz -C '${{ secrets.WORK_DIR }}' && rm -f ~/avas.tar.gz"
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -p "${{ secrets.SSH_PORT }}" -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "find '${{ secrets.WORK_DIR }}' -mindepth 1 ! -path '${{ secrets.WORK_DIR }}/var' ! -path '${{ secrets.WORK_DIR }}/var/*' -exec rm -rf {} + 2>/dev/null || true && tar -xzf ~/avas.tar.gz -C '${{ secrets.WORK_DIR }}' && rm -f ~/avas.tar.gz"
       - name: Run post-deployment commands
         uses: appleboy/ssh-action@master
         with:

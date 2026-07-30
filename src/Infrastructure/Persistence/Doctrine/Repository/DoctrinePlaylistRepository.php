@@ -47,4 +47,15 @@ class DoctrinePlaylistRepository extends ServiceEntityRepository implements Play
     {
         return $this->findBy(['date' => $date]);
     }
+
+    public function findBroadcastedMediaIds(): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('DISTINCT m.id')
+            ->join('p.items', 'pi')
+            ->join('pi.media', 'm');
+
+        $result = $qb->getQuery()->getScalarResult();
+        return array_column($result, 'id');
+    }
 }

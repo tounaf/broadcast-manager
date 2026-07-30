@@ -107,8 +107,8 @@ class PlaylistController extends AbstractController
             $playlist = new Playlist($slot, $date);
         }
 
-        // Clear and rebuild items
-        foreach ($playlist->getItems() as $item) {
+        // Clear and rebuild items safely by converting collection to an array first
+        foreach (iterator_to_array($playlist->getItems()) as $item) {
             $playlist->removeItem($item);
         }
 
