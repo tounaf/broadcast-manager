@@ -38,8 +38,8 @@ const Login = ({ error: serverError, lastUsername }) => {
 
                     <Button type="submit" className="w-full">Se connecter</Button>
                 </form>
-                <div className="mt-6 text-center text-gray-500 text-xs">
-                    &copy; 2026 Broadcast Manager - Madagascar
+                <div className="mt-6 text-center text-gray-500 text-xs uppercase font-semibold">
+                    &copy; 2026 FVA Vitao ny asan'ny Fahamarinana - Madagascar
                 </div>
             </Card>
         </div>
