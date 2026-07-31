@@ -1,0 +1,46 @@
+[Fri Jul 31 07:15:20 2026] PHP 8.3.6 Development Server (http://127.0.0.1:8000) started
+[Fri Jul 31 07:15:22 2026] 127.0.0.1:54254 Accepted
+[Fri Jul 31 07:15:24 2026] 127.0.0.1:54254 [302]: HEAD /
+[Fri Jul 31 07:15:24 2026] 127.0.0.1:54254 Closing
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43872 Accepted
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43872 [200]: GET /login
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43872 Closing
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43880 Accepted
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43886 Accepted
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43880 [200]: GET /build/app.57c2b864.css
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43886 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43880 Closing
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43886 Closing
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43900 Accepted
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43904 Accepted
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43900 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43904 [200]: GET /build/app.06a75792.js
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43904 Closing
+[Fri Jul 31 07:15:54 2026] 127.0.0.1:43900 Closing
+[Fri Jul 31 07:15:55 2026] 127.0.0.1:43910 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43910 [302]: POST /login
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43910 Closing
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43918 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43918 [200]: GET /
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43918 Closing
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43930 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43938 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43930 [200]: GET /build/app.57c2b864.css
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43938 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43930 Closing
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43938 Closing
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43950 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43962 Accepted
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43950 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43962 [200]: GET /build/app.06a75792.js
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43950 Closing
+[Fri Jul 31 07:15:56 2026] 127.0.0.1:43962 Closing
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43964 Accepted
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43980 Accepted
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43964 [200]: GET /api/programs
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43964 Closing
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43980 [200]: GET /api/themes
+[Fri Jul 31 07:15:57 2026] 127.0.0.1:43980 Closing
+[Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 Accepted
+[Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 [200]: GET /api/playlists/daily?date=2026-07-27
+[Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 Closing

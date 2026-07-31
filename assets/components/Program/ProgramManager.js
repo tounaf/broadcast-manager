@@ -82,12 +82,54 @@ const ThemePicker = ({ themes, selectedTheme, onSelect, onAddTheme }) => {
     );
 };
 
+const formatDateFR = (date) => {
+    if (!date) return '';
+    const months = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+};
+
+const formatDuration = (sec) => {
+    const absSec = Math.abs(sec);
+    const h = Math.floor(absSec / 3600);
+    const m = Math.floor((absSec % 3600) / 60);
+    const s = absSec % 60;
+    return `${sec < 0 ? '-' : ''}${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
+};
+
+const getSlotDuration = (startTime, endTime) => {
+    if (!startTime || !endTime) return 3600;
+    const [sh, sm] = startTime.split(':').map(Number);
+    const [eh, em] = endTime.split(':').map(Number);
+    let duration = (eh * 3600 + em * 60) - (sh * 3600 + sm * 60);
+    if (duration < 0) duration += 86400; // end time is next day
+    return duration;
+};
+
+const getWeekDates = (dateStr) => {
+    const current = new Date(dateStr);
+    const day = current.getDay();
+    const diff = current.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(current.setDate(diff));
+
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        dates.push(d);
+    }
+    return dates;
+};
+
 const ProgramManager = () => {
     const [slots, setSlots] = useState([]);
     const [themes, setThemes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [currentSlot, setCurrentSlot] = useState({
         dayOfWeek: 'Lundi',
         label: '',
@@ -95,10 +137,64 @@ const ProgramManager = () => {
         endTime: '09:00',
         themeId: null
     });
+    const [playlistLoading, setPlaylistLoading] = useState(false);
+    const [playlistInfo, setPlaylistInfo] = useState(null);
+
+    const weekDates = getWeekDates(selectedDate);
+
+    const getSlotDateStr = (dayOfWeek) => {
+        const idx = DAYS.indexOf(dayOfWeek.trim());
+        if (idx === -1) return null;
+        const d = weekDates[idx];
+        if (!d) return null;
+        return d.toISOString().split('T')[0];
+    };
+
+    const changeDate = (days) => {
+        const d = new Date(selectedDate);
+        d.setDate(d.getDate() + days);
+        setSelectedDate(d.toISOString().split('T')[0]);
+    };
+
+    const changeMonth = (months) => {
+        const d = new Date(selectedDate);
+        d.setMonth(d.getMonth() + months);
+        setSelectedDate(d.toISOString().split('T')[0]);
+    };
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!isModalOpen || !currentSlot || !currentSlot.id) {
+            setPlaylistInfo(null);
+            return;
+        }
+
+        const dateStr = getSlotDateStr(currentSlot.dayOfWeek);
+        if (!dateStr) return;
+
+        setPlaylistLoading(true);
+        setPlaylistInfo(null);
+
+        fetch(`/api/playlists/daily?date=${dateStr}`)
+            .then(res => res.json())
+            .then(data => {
+                const found = data.find(it => it.slot.id === currentSlot.id);
+                if (found) {
+                    setPlaylistInfo(found.playlist);
+                } else {
+                    const slotDuration = getSlotDuration(currentSlot.startTime, currentSlot.endTime);
+                    setPlaylistInfo({ status: 'empty', items: [], totalDuration: 0, remainingDuration: slotDuration });
+                }
+                setPlaylistLoading(false);
+            })
+            .catch(err => {
+                console.error('Error fetching slot playlist info:', err);
+                setPlaylistLoading(false);
+            });
+    }, [isModalOpen, currentSlot?.id]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -205,23 +301,89 @@ const ProgramManager = () => {
 
     return (
         <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-gray-800">Grille Hebdomadaire</h2>
-                <Button onClick={() => {
-                    setCurrentSlot({ dayOfWeek: 'Lundi', label: '', startTime: '08:00', endTime: '09:00', themeId: themes[0]?.id });
-                    setIsModalOpen(true);
-                }}>
-                    + Nouveau Créneau
-                </Button>
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+                <div>
+                    <h2 className="text-xl font-bold text-gray-800">Grille Hebdomadaire</h2>
+                    <p className="text-xs text-gray-500 mt-1">
+                        Semaine du {formatDateFR(weekDates[0])} au {formatDateFR(weekDates[6])}
+                    </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center bg-white rounded-lg shadow-sm border overflow-hidden">
+                        <button
+                            type="button"
+                            onClick={() => changeMonth(-1)}
+                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
+                            title="Mois précédent"
+                        >
+                            ⏮️ -1M
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => changeDate(-7)}
+                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
+                            title="Semaine précédente"
+                        >
+                            ◀️ -1S
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
+                            className="px-3 py-2 text-xs font-bold text-blue-600 hover:bg-gray-50 border-r"
+                        >
+                            Aujourd'hui
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => changeDate(7)}
+                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
+                            title="Semaine suivante"
+                        >
+                            +1S ▶️
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => changeMonth(1)}
+                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50"
+                            title="Mois suivant"
+                        >
+                            +1M ⏭️
+                        </button>
+                    </div>
+
+                    <div className="flex items-center bg-white p-2 rounded-lg shadow-sm border">
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={e => setSelectedDate(e.target.value)}
+                            className="outline-none text-blue-600 font-bold text-sm"
+                        />
+                    </div>
+
+                    <Button onClick={() => {
+                        setCurrentSlot({ dayOfWeek: 'Lundi', label: '', startTime: '08:00', endTime: '09:00', themeId: themes[0]?.id });
+                        setIsModalOpen(true);
+                    }}>
+                        + Nouveau Créneau
+                    </Button>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-[calc(100vh-200px)] border">
                 <div className="flex-1 overflow-auto relative">
                     <div className="grid grid-cols-8 border-b sticky top-0 bg-white z-20 shadow-sm">
                         <div className="p-3 border-r text-center font-bold text-slate-400 text-[10px] flex items-center justify-center uppercase">Heure</div>
-                        {DAYS.map(day => (
-                            <div key={day} className="p-3 text-center font-bold border-r last:border-r-0 text-xs text-slate-600 uppercase tracking-wider">{day}</div>
-                        ))}
+                        {DAYS.map((day, idx) => {
+                            const dateOfCurrentDay = weekDates[idx];
+                            const dateStr = dateOfCurrentDay ? `${dateOfCurrentDay.getDate().toString().padStart(2, '0')}/${(dateOfCurrentDay.getMonth() + 1).toString().padStart(2, '0')}` : '';
+                            return (
+                                <div key={day} className="p-3 text-center font-bold border-r last:border-r-0 text-xs text-slate-600 uppercase tracking-wider">
+                                    <div>{day}</div>
+                                    <div className="text-[10px] text-blue-500 font-bold mt-0.5">{dateStr}</div>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <div className="grid grid-cols-8 relative" style={{ height: '960px' }}>
@@ -343,6 +505,55 @@ const ProgramManager = () => {
                         onSelect={id => setCurrentSlot({...currentSlot, themeId: id})}
                         onAddTheme={handleAddTheme}
                     />
+
+                    {/* Display playlist status & remaining/available duration */}
+                    {currentSlot.id && (
+                        <div className="bg-gray-50 rounded-xl border p-4 mt-4">
+                            <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">Statut de la diffusion</h4>
+                            {playlistLoading ? (
+                                <p className="text-sm text-gray-500 italic animate-pulse">Chargement des informations de playlist...</p>
+                            ) : playlistInfo ? (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center text-sm text-gray-700">
+                                        <span>Playlist affectée :</span>
+                                        <span className={`font-bold uppercase text-xs px-2 py-0.5 rounded ${
+                                            playlistInfo.status === 'validated' ? 'bg-green-100 text-green-700' :
+                                            playlistInfo.status === 'to_validate' ? 'bg-blue-100 text-blue-700' :
+                                            playlistInfo.status === 'draft' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-500'
+                                        }`}>
+                                            {playlistInfo.status === 'empty' ? 'Vide / Non affectée' : playlistInfo.status.replace('_', ' ')}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm text-gray-700">
+                                        <span>Nombre de médias :</span>
+                                        <span className="font-bold font-mono">{playlistInfo.items.length}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm text-gray-700">
+                                        <span>Durée programmée / Durée slot :</span>
+                                        <span className="font-bold font-mono">
+                                            {formatDuration(playlistInfo.totalDuration)} / {formatDuration(getSlotDuration(currentSlot.startTime, currentSlot.endTime))}
+                                        </span>
+                                    </div>
+                                    <div className="border-t pt-2 mt-2 flex justify-between items-center text-sm font-bold">
+                                        <span className={playlistInfo.remainingDuration < 0 ? 'text-red-500' : 'text-blue-600'}>
+                                            {playlistInfo.remainingDuration < 0 ? 'Dépassement :' : 'Durée disponible :'}
+                                        </span>
+                                        <span className={playlistInfo.remainingDuration < 0 ? 'text-red-600 font-mono' : 'text-blue-700 font-mono'}>
+                                            {formatDuration(Math.abs(playlistInfo.remainingDuration))}
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mt-1">
+                                        <div
+                                            className={`h-full ${playlistInfo.remainingDuration < 0 ? 'bg-red-500' : 'bg-green-500'}`}
+                                            style={{ width: `${Math.min((playlistInfo.totalDuration / getSlotDuration(currentSlot.startTime, currentSlot.endTime)) * 100, 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-sm text-red-500 italic">Impossible de charger les données de la playlist.</p>
+                            )}
+                        </div>
+                    )}
                 </div>
             </Modal>
         </div>
