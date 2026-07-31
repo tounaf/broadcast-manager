@@ -13,4 +13,6 @@ interface ProgramSlotRepositoryInterface
     public function findAll();
     /** @return ProgramSlot[] */
     public function findByDay(string $dayOfWeek): array;
+    /** @return ProgramSlot[] */
+    public function findByDateRange(\DateTimeInterface $start, \DateTimeInterface $end): array;
 }

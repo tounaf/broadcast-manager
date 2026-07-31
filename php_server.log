@@ -44,3 +44,279 @@
 [Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 Accepted
 [Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 [200]: GET /api/playlists/daily?date=2026-07-27
 [Fri Jul 31 07:16:04 2026] 127.0.0.1:58842 Closing
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41606 Accepted
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41606 [302]: GET /api/programs
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41606 Closing
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41608 Accepted
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41608 [302]: GET /api/programs
+[Fri Jul 31 08:20:15 2026] 127.0.0.1:41608 Closing
+[Fri Jul 31 08:32:31 2026] 127.0.0.1:49144 Accepted
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49144 [200]: GET /login
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49144 Closing
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49150 Accepted
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49154 Accepted
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49150 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49154 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49150 Closing
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49154 Closing
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49164 Accepted
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49172 Accepted
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49164 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49172 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49172 Closing
+[Fri Jul 31 08:32:32 2026] 127.0.0.1:49164 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49182 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49182 [302]: POST /login
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49182 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49190 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49190 [200]: GET /
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49190 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49192 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49200 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49192 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49200 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49192 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49200 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49204 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49218 Accepted
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49204 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49218 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49204 Closing
+[Fri Jul 31 08:32:34 2026] 127.0.0.1:49218 Closing
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49234 Accepted
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49242 Accepted
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49234 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49234 Closing
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49242 [200]: GET /api/themes
+[Fri Jul 31 08:32:36 2026] 127.0.0.1:49242 Closing
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49250 Accepted
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49256 Accepted
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49250 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49250 Closing
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49256 [200]: GET /api/themes
+[Fri Jul 31 08:32:38 2026] 127.0.0.1:49256 Closing
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49258 Accepted
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49266 Accepted
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49258 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49258 Closing
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49266 [200]: GET /api/themes
+[Fri Jul 31 08:32:39 2026] 127.0.0.1:49266 Closing
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44244 Accepted
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44250 Accepted
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44244 [200]: GET /api/programs?start_date=2026-06-01&end_date=2026-07-05
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44244 Closing
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44250 [200]: GET /api/themes
+[Fri Jul 31 08:32:41 2026] 127.0.0.1:44250 Closing
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44252 Accepted
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44258 Accepted
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44252 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44252 Closing
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44258 [200]: GET /api/themes
+[Fri Jul 31 08:32:43 2026] 127.0.0.1:44258 Closing
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45742 Accepted
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45742 [200]: GET /login
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45742 Closing
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45748 Accepted
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45758 Accepted
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45748 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45748 Closing
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45758 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45758 Closing
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45774 Accepted
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45774 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45774 Closing
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45784 Accepted
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45784 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:34:24 2026] 127.0.0.1:45784 Closing
+[Fri Jul 31 08:34:25 2026] 127.0.0.1:45786 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45786 [302]: POST /login
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45786 Closing
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45796 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45796 [200]: GET /
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45796 Closing
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45810 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45822 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45810 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45822 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45810 Closing
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45822 Closing
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45826 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45830 Accepted
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45826 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45830 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45830 Closing
+[Fri Jul 31 08:34:26 2026] 127.0.0.1:45826 Closing
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45840 Accepted
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45848 Accepted
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45840 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45840 Closing
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45848 [200]: GET /api/themes
+[Fri Jul 31 08:34:27 2026] 127.0.0.1:45848 Closing
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45856 Accepted
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45868 Accepted
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45856 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45856 Closing
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45868 [200]: GET /api/themes
+[Fri Jul 31 08:34:29 2026] 127.0.0.1:45868 Closing
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37546 Accepted
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37562 Accepted
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37546 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37546 Closing
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37562 [200]: GET /api/themes
+[Fri Jul 31 08:34:31 2026] 127.0.0.1:37562 Closing
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37578 Accepted
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37578 [200]: GET /api/programs?start_date=2026-06-01&end_date=2026-07-05
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37578 Closing
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37582 Accepted
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37582 [200]: GET /api/themes
+[Fri Jul 31 08:34:32 2026] 127.0.0.1:37582 Closing
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37598 Accepted
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37614 Accepted
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37598 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37598 Closing
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37614 [200]: GET /api/themes
+[Fri Jul 31 08:34:34 2026] 127.0.0.1:37614 Closing
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47748 Accepted
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47748 [200]: GET /login
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47748 Closing
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47754 Accepted
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47770 Accepted
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47754 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47770 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47754 Closing
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47770 Closing
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47772 Accepted
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47772 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47772 Closing
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47774 Accepted
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47774 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:35:48 2026] 127.0.0.1:47774 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47788 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47788 [302]: POST /login
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47788 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47792 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47792 [200]: GET /
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47792 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47808 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47824 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47808 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47824 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47808 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47824 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47836 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47836 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47836 Closing
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47846 Accepted
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47846 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:35:49 2026] 127.0.0.1:47846 Closing
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53160 Accepted
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53174 Accepted
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53160 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53160 Closing
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53174 [200]: GET /api/themes
+[Fri Jul 31 08:35:51 2026] 127.0.0.1:53174 Closing
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53190 Accepted
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53190 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53190 Closing
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53202 Accepted
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53202 [200]: GET /api/themes
+[Fri Jul 31 08:35:53 2026] 127.0.0.1:53202 Closing
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53210 Accepted
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53210 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53210 Closing
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53218 Accepted
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53218 [200]: GET /api/themes
+[Fri Jul 31 08:35:54 2026] 127.0.0.1:53218 Closing
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53234 Accepted
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53248 Accepted
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53234 [200]: GET /api/programs?start_date=2026-06-01&end_date=2026-07-05
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53234 Closing
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53248 [200]: GET /api/themes
+[Fri Jul 31 08:35:56 2026] 127.0.0.1:53248 Closing
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53258 Accepted
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53274 Accepted
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53258 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53258 Closing
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53274 [200]: GET /api/themes
+[Fri Jul 31 08:35:58 2026] 127.0.0.1:53274 Closing
+[Fri Jul 31 08:36:03 2026] 127.0.0.1:42650 Accepted
+[Fri Jul 31 08:36:03 2026] 127.0.0.1:42650 [403]: POST /api/themes
+[Fri Jul 31 08:36:03 2026] 127.0.0.1:42650 Closing
+[Fri Jul 31 08:36:04 2026] 127.0.0.1:42664 Accepted
+[Fri Jul 31 08:36:04 2026] 127.0.0.1:42664 [403]: POST /api/programs
+[Fri Jul 31 08:36:04 2026] 127.0.0.1:42664 Closing
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59936 Accepted
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59936 [200]: GET /login
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59936 Closing
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59948 Accepted
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59954 Accepted
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59948 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59954 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59948 Closing
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59954 Closing
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59970 Accepted
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59974 Accepted
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59970 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59974 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59974 Closing
+[Fri Jul 31 08:39:54 2026] 127.0.0.1:59970 Closing
+[Fri Jul 31 08:39:55 2026] 127.0.0.1:59986 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59986 [302]: POST /login
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59986 Closing
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59992 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59992 [200]: GET /
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59992 Closing
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59998 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60004 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59998 [200]: GET /build/app.bc6a4685.css
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60004 [200]: GET /build/runtime.6f4bd0a9.js
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:59998 Closing
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60004 Closing
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60006 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60016 Accepted
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60006 [200]: GET /build/350.a8222820.js
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60016 [200]: GET /build/app.38c5763a.js
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60016 Closing
+[Fri Jul 31 08:39:56 2026] 127.0.0.1:60006 Closing
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60026 Accepted
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60042 Accepted
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60026 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60026 Closing
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60042 [200]: GET /api/themes
+[Fri Jul 31 08:39:57 2026] 127.0.0.1:60042 Closing
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60048 Accepted
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60052 Accepted
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60048 [200]: GET /api/programs?start_date=2026-07-27&end_date=2026-08-02
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60048 Closing
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60052 [200]: GET /api/themes
+[Fri Jul 31 08:39:59 2026] 127.0.0.1:60052 Closing
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60470 Accepted
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60480 Accepted
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60470 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60470 Closing
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60480 [200]: GET /api/themes
+[Fri Jul 31 08:40:00 2026] 127.0.0.1:60480 Closing
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60494 Accepted
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60510 Accepted
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60494 [200]: GET /api/programs?start_date=2026-06-01&end_date=2026-07-05
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60494 Closing
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60510 [200]: GET /api/themes
+[Fri Jul 31 08:40:02 2026] 127.0.0.1:60510 Closing
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60524 Accepted
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60530 Accepted
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60524 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60524 Closing
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60530 [200]: GET /api/themes
+[Fri Jul 31 08:40:04 2026] 127.0.0.1:60530 Closing
+[Fri Jul 31 08:40:09 2026] 127.0.0.1:60536 Accepted
+[Fri Jul 31 08:40:09 2026] 127.0.0.1:60536 [201]: POST /api/themes
+[Fri Jul 31 08:40:09 2026] 127.0.0.1:60536 Closing
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:60542 Accepted
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:60542 [201]: POST /api/programs
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:60542 Closing
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45698 Accepted
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45706 Accepted
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45698 [200]: GET /api/programs?start_date=2026-06-29&end_date=2026-08-02
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45698 Closing
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45706 [200]: GET /api/themes
+[Fri Jul 31 08:40:10 2026] 127.0.0.1:45706 Closing
