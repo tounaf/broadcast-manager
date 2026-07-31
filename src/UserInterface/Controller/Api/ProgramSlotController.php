@@ -18,9 +18,22 @@ class ProgramSlotController extends AbstractController
     ) {}
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $slots = $this->repository->findAll();
+        $startDateStr = $request->query->get('start_date');
+        $endDateStr = $request->query->get('end_date');
+
+        if ($startDateStr && $endDateStr) {
+            try {
+                $start = new \DateTimeImmutable($startDateStr);
+                $end = new \DateTimeImmutable($endDateStr);
+                $slots = $this->repository->findByDateRange($start, $end);
+            } catch (\Exception $e) {
+                return $this->json(['error' => 'Invalid date format'], Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            $slots = $this->repository->findAll();
+        }
         
         $data = array_map(fn(ProgramSlot $slot) => [
             'id' => $slot->getId(),

@@ -123,15 +123,64 @@ const getWeekDates = (dateStr) => {
     return dates;
 };
 
+const getMonthGridDates = (dateStr) => {
+    const d = new Date(dateStr);
+    const year = d.getFullYear();
+    const month = d.getMonth();
+
+    // First day of the month
+    const firstDay = new Date(year, month, 1);
+    // Find Monday of the first week of this month
+    let dayOfFirst = firstDay.getDay(); // 0 = Sunday, 1 = Monday...
+    let diffToMonday = dayOfFirst === 0 ? -6 : 1 - dayOfFirst;
+    const startOfGrid = new Date(firstDay);
+    startOfGrid.setDate(firstDay.getDate() + diffToMonday);
+
+    // Last day of the month
+    const lastDay = new Date(year, month + 1, 0);
+    // Find Sunday of the last week of this month
+    let dayOfLast = lastDay.getDay(); // 0 = Sunday...
+    let diffToSunday = dayOfLast === 0 ? 0 : 7 - dayOfLast;
+    const endOfGrid = new Date(lastDay);
+    endOfGrid.setDate(lastDay.getDate() + diffToSunday);
+
+    // Generate all dates between startOfGrid and endOfGrid
+    const dates = [];
+    let curr = new Date(startOfGrid);
+    while (curr <= endOfGrid) {
+        dates.push(new Date(curr));
+        curr.setDate(curr.getDate() + 1);
+    }
+    return dates;
+};
+
+const toISODate = (date) => {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
+const getFrenchDayFromDateStr = (dateStr) => {
+    if (!dateStr) return 'Lundi';
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const dObj = new Date(year, month - 1, day);
+    const idx = dObj.getDay();
+    const mapping = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    return mapping[idx];
+};
+
 const ProgramManager = () => {
     const [slots, setSlots] = useState([]);
     const [themes, setThemes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedDate, setSelectedDate] = useState(toISODate(new Date()));
     const [currentSlot, setCurrentSlot] = useState({
         dayOfWeek: 'Lundi',
+        date: null,
         label: '',
         startTime: '08:00',
         endTime: '09:00',
@@ -143,28 +192,80 @@ const ProgramManager = () => {
     const weekDates = getWeekDates(selectedDate);
 
     const getSlotDateStr = (dayOfWeek) => {
+        if (currentSlot && currentSlot.date) {
+            return currentSlot.date;
+        }
         const idx = DAYS.indexOf(dayOfWeek.trim());
         if (idx === -1) return null;
         const d = weekDates[idx];
         if (!d) return null;
-        return d.toISOString().split('T')[0];
+        return toISODate(d);
     };
 
     const changeDate = (days) => {
         const d = new Date(selectedDate);
         d.setDate(d.getDate() + days);
-        setSelectedDate(d.toISOString().split('T')[0]);
+        setSelectedDate(toISODate(d));
     };
 
     const changeMonth = (months) => {
         const d = new Date(selectedDate);
         d.setMonth(d.getMonth() + months);
-        setSelectedDate(d.toISOString().split('T')[0]);
+        setSelectedDate(toISODate(d));
+    };
+
+    const getSlotsForDate = (date) => {
+        const dateStr = toISODate(date);
+        const dayName = getFrenchDayFromDateStr(dateStr);
+
+        return slots.filter(slot => {
+            if (slot.date) {
+                return slot.date === dateStr;
+            }
+            return slot.dayOfWeek.trim() === dayName;
+        });
+    };
+
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            let startStr, endStr;
+            if (viewMode === 'week') {
+                const dates = getWeekDates(selectedDate);
+                startStr = toISODate(dates[0]);
+                endStr = toISODate(dates[6]);
+            } else {
+                const dates = getMonthGridDates(selectedDate);
+                startStr = toISODate(dates[0]);
+                endStr = toISODate(dates[dates.length - 1]);
+            }
+
+            const [slotsRes, themesRes] = await Promise.all([
+                fetch(`/api/programs?start_date=${startStr}&end_date=${endStr}`),
+                fetch('/api/themes')
+            ]);
+
+            if (!slotsRes.ok || !themesRes.ok) {
+                throw new Error('Erreur lors du chargement des données');
+            }
+
+            const slotsData = await slotsRes.json();
+            const themesData = await themesRes.json();
+
+            setSlots(Array.isArray(slotsData) ? slotsData : []);
+            setThemes(Array.isArray(themesData) ? themesData : []);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError(error.message);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [selectedDate, viewMode]);
 
     useEffect(() => {
         if (!isModalOpen || !currentSlot || !currentSlot.id) {
@@ -195,32 +296,6 @@ const ProgramManager = () => {
                 setPlaylistLoading(false);
             });
     }, [isModalOpen, currentSlot?.id]);
-
-    const fetchData = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const [slotsRes, themesRes] = await Promise.all([
-                fetch('/api/programs'),
-                fetch('/api/themes')
-            ]);
-            
-            if (!slotsRes.ok || !themesRes.ok) {
-                throw new Error('Erreur lors du chargement des données');
-            }
-
-            const slotsData = await slotsRes.json();
-            const themesData = await themesRes.json();
-            
-            setSlots(Array.isArray(slotsData) ? slotsData : []);
-            setThemes(Array.isArray(themesData) ? themesData : []);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError(error.message);
-            setLoading(false);
-        }
-    };
 
     const handleAddTheme = async (newTheme) => {
         try {
@@ -301,54 +376,77 @@ const ProgramManager = () => {
 
     return (
         <div className="p-6">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-800">Grille Hebdomadaire</h2>
+                    <h2 className="text-xl font-bold text-gray-800">
+                        {viewMode === 'week' ? 'Grille Hebdomadaire' : 'Grille Mensuelle'}
+                    </h2>
                     <p className="text-xs text-gray-500 mt-1">
-                        Semaine du {formatDateFR(weekDates[0])} au {formatDateFR(weekDates[6])}
+                        {viewMode === 'week' ? (
+                            `Semaine du ${formatDateFR(weekDates[0])} au ${formatDateFR(weekDates[6])}`
+                        ) : (
+                            `Mois de ${new Date(selectedDate).toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}`
+                        )}
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
+                    {/* View Toggle (Semaine vs Mois) */}
                     <div className="flex items-center bg-white rounded-lg shadow-sm border overflow-hidden">
                         <button
                             type="button"
-                            onClick={() => changeMonth(-1)}
-                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
-                            title="Mois précédent"
+                            onClick={() => setViewMode('week')}
+                            className={`px-3 py-2 text-xs font-bold border-r transition-colors ${viewMode === 'week' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                            title="Vue Semaine"
                         >
-                            ⏮️ -1M
+                            📅 Semaine
                         </button>
                         <button
                             type="button"
-                            onClick={() => changeDate(-7)}
-                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
-                            title="Semaine précédente"
+                            onClick={() => setViewMode('month')}
+                            className={`px-3 py-2 text-xs font-bold transition-colors ${viewMode === 'month' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                            title="Vue Mois"
                         >
-                            ◀️ -1S
+                            📆 Mois
+                        </button>
+                    </div>
+
+                    {/* Navigation buttons: << and >> */}
+                    <div className="flex items-center bg-white rounded-lg shadow-sm border overflow-hidden">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (viewMode === 'week') {
+                                    changeDate(-7);
+                                } else {
+                                    changeMonth(-1);
+                                }
+                            }}
+                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
+                            title={viewMode === 'week' ? 'Semaine précédente' : 'Mois précédent'}
+                        >
+                            ⏪ &lt;&lt;
                         </button>
                         <button
                             type="button"
-                            onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
+                            onClick={() => setSelectedDate(toISODate(new Date()))}
                             className="px-3 py-2 text-xs font-bold text-blue-600 hover:bg-gray-50 border-r"
                         >
                             Aujourd'hui
                         </button>
                         <button
                             type="button"
-                            onClick={() => changeDate(7)}
-                            className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50 border-r"
-                            title="Semaine suivante"
-                        >
-                            +1S ▶️
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => changeMonth(1)}
+                            onClick={() => {
+                                if (viewMode === 'week') {
+                                    changeDate(7);
+                                } else {
+                                    changeMonth(1);
+                                }
+                            }}
                             className="px-3 py-2 text-xs font-bold text-gray-600 hover:bg-gray-50"
-                            title="Mois suivant"
+                            title={viewMode === 'week' ? 'Semaine suivante' : 'Mois suivant'}
                         >
-                            +1M ⏭️
+                            &gt;&gt; ⏩
                         </button>
                     </div>
 
@@ -357,12 +455,20 @@ const ProgramManager = () => {
                             type="date"
                             value={selectedDate}
                             onChange={e => setSelectedDate(e.target.value)}
-                            className="outline-none text-blue-600 font-bold text-sm"
+                            className="outline-none text-blue-600 font-bold text-sm bg-white"
                         />
                     </div>
 
                     <Button onClick={() => {
-                        setCurrentSlot({ dayOfWeek: 'Lundi', label: '', startTime: '08:00', endTime: '09:00', themeId: themes[0]?.id });
+                        const todayStr = toISODate(new Date());
+                        setCurrentSlot({
+                            dayOfWeek: getFrenchDayFromDateStr(todayStr),
+                            date: todayStr,
+                            label: '',
+                            startTime: '08:00',
+                            endTime: '09:00',
+                            themeId: themes[0]?.id || null
+                        });
                         setIsModalOpen(true);
                     }}>
                         + Nouveau Créneau
@@ -371,56 +477,137 @@ const ProgramManager = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-[calc(100vh-200px)] border">
-                <div className="flex-1 overflow-auto relative">
-                    <div className="grid grid-cols-8 border-b sticky top-0 bg-white z-20 shadow-sm">
-                        <div className="p-3 border-r text-center font-bold text-slate-400 text-[10px] flex items-center justify-center uppercase">Heure</div>
-                        {DAYS.map((day, idx) => {
-                            const dateOfCurrentDay = weekDates[idx];
-                            const dateStr = dateOfCurrentDay ? `${dateOfCurrentDay.getDate().toString().padStart(2, '0')}/${(dateOfCurrentDay.getMonth() + 1).toString().padStart(2, '0')}` : '';
-                            return (
-                                <div key={day} className="p-3 text-center font-bold border-r last:border-r-0 text-xs text-slate-600 uppercase tracking-wider">
-                                    <div>{day}</div>
-                                    <div className="text-[10px] text-blue-500 font-bold mt-0.5">{dateStr}</div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="grid grid-cols-8 relative" style={{ height: '960px' }}>
-                        <div className="border-r bg-white">
-                            {HOURS.map(h => (
-                                <div key={h} className="h-[40px] text-[10px] text-slate-400 text-center border-b border-slate-100 flex items-center justify-center font-mono">
-                                    {h.toString().padStart(2, '0')}:00
+                {viewMode === 'month' ? (
+                    <div className="flex-1 overflow-auto relative">
+                        {/* Month View Headers */}
+                        <div className="grid grid-cols-7 border-b sticky top-0 bg-white z-20 shadow-sm">
+                            {DAYS.map(day => (
+                                <div key={day} className="p-3 text-center font-bold border-r last:border-r-0 text-xs text-slate-600 uppercase tracking-wider bg-white">
+                                    {day}
                                 </div>
                             ))}
                         </div>
+                        {/* Month View Grid */}
+                        <div className="grid grid-cols-7 auto-rows-fr h-[calc(100vh-250px)]" style={{ minHeight: '500px' }}>
+                            {getMonthGridDates(selectedDate).map((cellDate, idx) => {
+                                const dStr = toISODate(cellDate);
+                                const isCurrentMonth = cellDate.getMonth() === new Date(selectedDate).getMonth();
+                                const isToday = toISODate(cellDate) === toISODate(new Date());
+                                const cellSlots = getSlotsForDate(cellDate);
 
-                        {DAYS.map(day => (
-                            <div key={day} className="border-r last:border-r-0 relative group">
-                                {HOURS.map(h => (
-                                    <div key={h} className="h-[40px] border-b border-slate-100/50 group-hover:bg-gray-50 transition-colors"></div>
-                                ))}
-
-                                {slots.filter(s => s.dayOfWeek.trim() === day).map(slot => (
+                                return (
                                     <div
-                                        key={slot.id}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            const theme = themes.find(t => t.label === slot.theme);
-                                            setCurrentSlot({ ...slot, themeId: theme?.id });
+                                        key={idx}
+                                        onClick={() => {
+                                            setCurrentSlot({
+                                                dayOfWeek: getFrenchDayFromDateStr(dStr),
+                                                date: dStr,
+                                                label: '',
+                                                startTime: '08:00',
+                                                endTime: '09:00',
+                                                themeId: themes[0]?.id || null
+                                            });
                                             setIsModalOpen(true);
                                         }}
-                                        className="absolute left-1 right-1 rounded-lg p-2 text-[11px] text-white font-bold cursor-pointer shadow-sm hover:brightness-110 hover:scale-[1.02] transition-all z-10 overflow-hidden ring-1 ring-white/20"
-                                        style={getSlotStyle(slot)}
+                                        className={`border-r border-b p-2 min-h-[90px] flex flex-col hover:bg-slate-50 cursor-pointer transition-colors ${
+                                            isCurrentMonth ? 'bg-white' : 'bg-slate-50/50 text-slate-400'
+                                        } ${isToday ? 'ring-2 ring-blue-500 ring-inset bg-blue-50/10' : ''}`}
                                     >
-                                        <div className="truncate drop-shadow-sm">{slot.label || slot.theme}</div>
-                                        <div className="opacity-70 text-[9px] font-mono">{slot.startTime} - {slot.endTime}</div>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
+                                                isToday ? 'bg-blue-600 text-white' : 'text-slate-500'
+                                            }`}>
+                                                {cellDate.getDate()}
+                                            </span>
+                                            {cellSlots.length > 0 && (
+                                                <span className="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full font-bold">
+                                                    {cellSlots.length} slot{cellSlots.length > 1 ? 's' : ''}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex-1 overflow-y-auto space-y-1 max-h-[80px] pr-0.5" onClick={e => e.stopPropagation()}>
+                                            {cellSlots.map(slot => {
+                                                const theme = themes.find(t => t.label === slot.theme);
+                                                return (
+                                                    <div
+                                                        key={slot.id}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const slotTheme = themes.find(t => t.label === slot.theme);
+                                                            setCurrentSlot({ ...slot, themeId: slotTheme?.id });
+                                                            setIsModalOpen(true);
+                                                        }}
+                                                        className="rounded px-1.5 py-0.5 text-[10px] text-white font-semibold truncate hover:brightness-110 shadow-sm"
+                                                        style={{ backgroundColor: theme ? theme.color : '#94a3b8' }}
+                                                        title={`${slot.label || slot.theme} (${slot.startTime}-${slot.endTime})`}
+                                                    >
+                                                        {slot.label || slot.theme}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex-1 overflow-auto relative">
+                        {/* Week View Grid */}
+                        <div className="grid grid-cols-8 border-b sticky top-0 bg-white z-20 shadow-sm">
+                            <div className="p-3 border-r text-center font-bold text-slate-400 text-[10px] flex items-center justify-center uppercase bg-white">Heure</div>
+                            {DAYS.map((day, idx) => {
+                                const dateOfCurrentDay = weekDates[idx];
+                                const dateStr = dateOfCurrentDay ? `${dateOfCurrentDay.getDate().toString().padStart(2, '0')}/${(dateOfCurrentDay.getMonth() + 1).toString().padStart(2, '0')}` : '';
+                                return (
+                                    <div key={day} className="p-3 text-center font-bold border-r last:border-r-0 text-xs text-slate-600 uppercase tracking-wider bg-white">
+                                        <div>{day}</div>
+                                        <div className="text-[10px] text-blue-500 font-bold mt-0.5">{dateStr}</div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="grid grid-cols-8 relative" style={{ height: '960px' }}>
+                            <div className="border-r bg-white">
+                                {HOURS.map(h => (
+                                    <div key={h} className="h-[40px] text-[10px] text-slate-400 text-center border-b border-slate-100 flex items-center justify-center font-mono">
+                                        {h.toString().padStart(2, '0')}:00
                                     </div>
                                 ))}
                             </div>
-                        ))}
+
+                            {DAYS.map((day, idx) => {
+                                const currentDayDate = weekDates[idx];
+                                return (
+                                    <div key={day} className="border-r last:border-r-0 relative group">
+                                        {HOURS.map(h => (
+                                            <div key={h} className="h-[40px] border-b border-slate-100/50 group-hover:bg-gray-50 transition-colors"></div>
+                                        ))}
+
+                                        {currentDayDate && getSlotsForDate(currentDayDate).map(slot => (
+                                            <div
+                                                key={slot.id}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const theme = themes.find(t => t.label === slot.theme);
+                                                    setCurrentSlot({ ...slot, themeId: theme?.id });
+                                                    setIsModalOpen(true);
+                                                }}
+                                                className="absolute left-1 right-1 rounded-lg p-2 text-[11px] text-white font-bold cursor-pointer shadow-sm hover:brightness-110 hover:scale-[1.02] transition-all z-10 overflow-hidden ring-1 ring-white/20"
+                                                style={getSlotStyle(slot)}
+                                            >
+                                                <div className="truncate drop-shadow-sm">{slot.label || slot.theme}</div>
+                                                <div className="opacity-70 text-[9px] font-mono">{slot.startTime} - {slot.endTime}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <Modal
@@ -449,20 +636,51 @@ const ProgramManager = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Jour</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Date du créneau</label>
+                            <input
+                                type="date"
+                                value={currentSlot.date || ''}
+                                onChange={e => {
+                                    const newDateStr = e.target.value;
+                                    if (newDateStr) {
+                                        const frenchDay = getFrenchDayFromDateStr(newDateStr);
+                                        setCurrentSlot({
+                                            ...currentSlot,
+                                            date: newDateStr,
+                                            dayOfWeek: frenchDay
+                                        });
+                                    } else {
+                                        setCurrentSlot({
+                                            ...currentSlot,
+                                            date: null
+                                        });
+                                    }
+                                }}
+                                className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Jour de la semaine</label>
                             <select
                                 value={currentSlot.dayOfWeek}
                                 onChange={e => setCurrentSlot({...currentSlot, dayOfWeek: e.target.value})}
-                                className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                             >
                                 {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
                             </select>
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Horaires</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Heure de début</label>
                             <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-md border border-gray-200 text-xs font-mono font-bold text-blue-600">
                                 <span>{currentSlot.startTime}</span>
-                                <span className="text-gray-300">→</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Heure de fin</label>
+                            <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-md border border-gray-200 text-xs font-mono font-bold text-blue-600">
                                 <span>{currentSlot.endTime}</span>
                             </div>
                         </div>

@@ -38,4 +38,18 @@ class DoctrineProgramSlotRepository extends ServiceEntityRepository implements P
     {
         return $this->findBy(['dayOfWeek' => $dayOfWeek]);
     }
+
+    /**
+     * @return ProgramSlot[]
+     */
+    public function findByDateRange(\DateTimeInterface $start, \DateTimeInterface $end): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.date IS NULL')
+            ->orWhere('s.date >= :start AND s.date <= :end')
+            ->setParameter('start', $start->format('Y-m-d'))
+            ->setParameter('end', $end->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
 }
