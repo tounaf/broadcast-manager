@@ -1,70 +1,84 @@
 import React, { useEffect } from 'react';
+import { IconX } from './Icons';
 
 const Modal = ({ isOpen, onClose, title, children, footer }) => {
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
+            if (event.key === 'Escape') onClose();
         };
 
         if (isOpen) {
             window.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
         }
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
         };
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
     return (
-        <div
-            className="fixed inset-0 z-50 overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-        >
-            <div className="flex min-h-screen items-center justify-center px-4 py-6 text-center sm:p-0">
-                <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-                    onClick={onClose}
-                />
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div className="fixed inset-0 bg-overlay backdrop-blur-sm" onClick={onClose} />
 
-                <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
-                    &#8203;
-                </span>
+            {/* Mobile: bottom sheet */}
+            <div className="fixed inset-x-0 bottom-0 z-20 flex flex-col max-h-[92dvh] rounded-t-2xl border border-border bg-surface shadow-2xl sm:hidden app-safe-bottom">
+                <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-border" />
+                <div className="flex items-start justify-between gap-4 px-4 pt-3 pb-2">
+                    <h3 id="modal-title" className="text-lg font-semibold text-fg pr-2">
+                        {title}
+                    </h3>
+                    <button
+                        type="button"
+                        className="rounded-full bg-surface-2 p-2 text-muted hover:text-fg min-h-11 min-w-11 flex items-center justify-center"
+                        onClick={onClose}
+                        aria-label="Fermer"
+                    >
+                        <IconX size={18} />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+                <div className="flex flex-col-reverse gap-2 border-t border-border px-4 py-3">
+                    {footer || (
+                        <button
+                            type="button"
+                            className="min-h-11 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-fg"
+                            onClick={onClose}
+                        >
+                            Fermer
+                        </button>
+                    )}
+                </div>
+            </div>
 
+            {/* Desktop: centered dialog */}
+            <div className="hidden sm:flex min-h-full items-center justify-center p-4">
                 <div
-                    className="relative z-20 inline-block w-full max-w-2xl transform overflow-hidden rounded-2xl border border-slate-200 bg-white px-4 py-5 shadow-2xl shadow-slate-900/20 transition-all sm:my-8 sm:align-middle sm:px-6"
+                    className="relative z-20 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-surface px-6 py-5 shadow-2xl"
                     onClick={(event) => event.stopPropagation()}
                 >
                     <div className="flex items-start justify-between gap-4">
-                        <div>
-                            <h3 id="modal-title" className="text-lg font-semibold leading-6 text-slate-900">
-                                {title}
-                            </h3>
-                        </div>
+                        <h3 id="modal-title-desktop" className="text-lg font-semibold text-fg">
+                            {title}
+                        </h3>
                         <button
                             type="button"
-                            className="rounded-full bg-slate-100 p-2 text-slate-600 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="rounded-full bg-surface-2 p-2 text-muted hover:text-fg"
                             onClick={onClose}
-                            aria-label="Fermer la fenêtre modale"
+                            aria-label="Fermer"
                         >
-                            ×
+                            <IconX size={18} />
                         </button>
                     </div>
-
-                    <div className="mt-4">
-                        {children}
-                    </div>
-
-                    <div className="mt-6 flex flex-col-reverse gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
+                    <div className="mt-4">{children}</div>
+                    <div className="mt-6 flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
                         {footer || (
                             <button
                                 type="button"
-                                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                                className="inline-flex justify-center rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2"
                                 onClick={onClose}
                             >
                                 Fermer

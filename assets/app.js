@@ -8,11 +8,14 @@ import './styles/app.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App';
+import { ThemeProvider } from './components/theme/ThemeContext';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<App />);
+    root.render(
+        <ThemeProvider>
+            <App />
+        </ThemeProvider>
+    );
 }
-
-console.log('React app initialized with Tailwind!');

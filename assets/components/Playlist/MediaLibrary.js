@@ -114,8 +114,8 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
     });
 
     const ItemContainer = onSelect ? 'button' : 'div';
-    const cardClassName = `w-full text-left p-3 border rounded-lg transition flex justify-between items-center bg-white ${
-        onSelect ? 'hover:bg-blue-50 cursor-pointer' : 'border-slate-200 shadow-sm'
+    const cardClassName = `w-full text-left p-3 border border-border rounded-xl transition flex justify-between items-center bg-surface min-h-14 ${
+        onSelect ? 'hover:bg-primary-soft cursor-pointer' : 'shadow-sm'
     }`;
 
     return (
@@ -125,7 +125,7 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                     placeholder="Rechercher un média..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="mb-0 flex-1 bg-white"
+                    className="mb-0 flex-1"
                 />
                 <div className="flex items-center gap-2 shrink-0">
                     <Button onClick={() => setIsAddModalOpen(true)} variant="outline" className="shrink-0 font-bold">+</Button>
@@ -141,38 +141,37 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                         variant="outline"
                         className="shrink-0 font-bold"
                     >
-                        Importer un fichier
+                        Importer
                     </Button>
                 </div>
             </div>
 
-            {/* Tab navigation to filter by broadcast status */}
-            <div className="flex border-b mb-4">
+            <div className="flex border-b border-border mb-4">
                 <button
                     type="button"
                     onClick={() => setActiveTab('all')}
-                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'all' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'all' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-fg'}`}
                 >
                     Tous
                 </button>
                 <button
                     type="button"
                     onClick={() => setActiveTab('new')}
-                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'new' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'new' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-fg'}`}
                 >
                     Non diffusés
                 </button>
                 <button
                     type="button"
                     onClick={() => setActiveTab('broadcasted')}
-                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'broadcasted' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 pb-2.5 text-xs font-extrabold border-b-2 transition ${activeTab === 'broadcasted' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-fg'}`}
                 >
                     Déjà diffusés
                 </button>
             </div>
 
             <div className="flex-1 overflow-y-auto pr-1">
-                <div className={isStandalone ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "space-y-2"}>
+                <div className={isStandalone ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" : "space-y-2"}>
                     {filteredMedias.map(media => (
                         <ItemContainer
                             key={media.id}
@@ -184,21 +183,21 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                         >
                             <div className="min-w-0 flex-1 pr-2">
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                    <p className="font-bold text-sm text-gray-800 truncate" title={media.title}>
+                                    <p className="font-bold text-sm text-fg truncate" title={media.title}>
                                         {media.title}
                                     </p>
                                     {media.is_broadcasted && (
-                                        <span className="bg-orange-100 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide shrink-0" title="Déjà diffusé dans un programme passé">
-                                            ⏱️ Diffusé
+                                        <span className="bg-warning-soft text-warning text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide shrink-0">
+                                            Diffusé
                                         </span>
                                     )}
                                 </div>
-                                <p className="text-[10px] text-gray-500 uppercase font-semibold mt-0.5">
+                                <p className="text-[10px] text-muted uppercase font-semibold mt-0.5">
                                     {media.type} • {formatDuration(media.duration)}
                                 </p>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                                {onSelect && <span className="text-blue-500 text-lg font-bold">+</span>}
+                                {onSelect && <span className="text-primary text-lg font-bold">+</span>}
                                 {isStandalone && (
                                     <button
                                         type="button"
@@ -206,11 +205,10 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                                             e.stopPropagation();
                                             handleDeleteMedia(media.id);
                                         }}
-                                        className="px-2.5 py-1 text-red-500 hover:bg-red-50 rounded-lg border border-red-200 transition-colors shrink-0 font-bold text-xs flex items-center gap-1 bg-white"
+                                        className="px-2.5 py-2 text-danger hover:bg-danger-soft rounded-lg border border-border transition-colors shrink-0 font-bold text-xs min-h-11"
                                         title="Supprimer ce média de la médiathèque"
                                     >
-                                        <span>🗑️</span>
-                                        <span className="hidden sm:inline">Supprimer</span>
+                                        Supprimer
                                     </button>
                                 )}
                             </div>
@@ -218,15 +216,15 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                     ))}
                 </div>
                 {filteredMedias.length === 0 && (
-                    <p className="text-center text-gray-400 text-sm py-8 italic">Aucun média trouvé</p>
+                    <p className="text-center text-muted text-sm py-8 italic">Aucun média trouvé</p>
                 )}
                 {isImporting && (
                     <div className="mt-4 px-2">
-                        <div className="text-sm text-gray-600 mb-1">Import en cours...</div>
-                        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-500 transition-all" style={{ width: `${importProgress}%` }}></div>
+                        <div className="text-sm text-muted mb-1">Import en cours...</div>
+                        <div className="w-full bg-surface-2 h-2 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary transition-all" style={{ width: `${importProgress}%` }}></div>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">{importProgress}%</div>
+                        <div className="text-xs text-muted mt-1">{importProgress}%</div>
                     </div>
                 )}
             </div>
@@ -236,7 +234,7 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                 onClose={() => setIsAddModalOpen(false)}
                 title="Nouveau Média"
                 footer={
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 w-full">
                         <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Annuler</Button>
                         <Button onClick={handleCreateMedia}>Enregistrer</Button>
                     </div>
@@ -246,11 +244,11 @@ const MediaLibrary = ({ onSelect, typeFilter }) => {
                     <Input label="Titre" value={newMedia.title} onChange={e => setNewMedia({...newMedia, title: e.target.value})} />
                     <Input label="Durée (secondes)" type="number" value={newMedia.duration} onChange={e => setNewMedia({...newMedia, duration: e.target.value})} />
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-fg mb-1">Type</label>
                         <select
                             value={newMedia.type}
                             onChange={e => setNewMedia({...newMedia, type: e.target.value})}
-                            className="w-full border rounded-md p-2 text-sm bg-white"
+                            className="w-full border border-border rounded-lg p-2.5 text-sm bg-surface text-fg min-h-11"
                         >
                             <option value="film">Film</option>
                             <option value="clip">Clip</option>

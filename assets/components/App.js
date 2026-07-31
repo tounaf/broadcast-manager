@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './UI/Sidebar';
 import Header from './UI/Header';
+import BottomNav from './UI/BottomNav';
 import ProgramManager from './Program/ProgramManager';
 import Login from './Login';
 import UserManagement from './UserManagement';
@@ -8,6 +9,14 @@ import RoleManagement from './RoleManagement';
 import Profile from './Profile';
 import PlaylistManager from './Playlist/PlaylistManager';
 import MediaLibrary from './Playlist/MediaLibrary';
+import {
+    IconCalendar,
+    IconClapperboard,
+    IconFilm,
+    IconMegaphone,
+    IconShield,
+    IconUsers,
+} from './UI/Icons';
 
 const App = () => {
     const [user, setUser] = useState(window.user_data);
@@ -32,59 +41,61 @@ const App = () => {
                 return <Profile user={user} />;
             case 'mediatheque':
                 return (
-                    <div className="p-6 h-full flex flex-col">
+                    <div className="p-4 sm:p-6 h-full flex flex-col">
                         <div className="mb-4">
-                            <h2 className="text-xl font-bold text-gray-800">Gestion de la Médiathèque</h2>
-                            <p className="text-xs text-gray-500 mt-1">Gérez le catalogue global de vos films, clips, publicités et autres médias.</p>
+                            <h2 className="text-xl font-bold text-fg">Gestion de la Médiathèque</h2>
+                            <p className="text-xs text-muted mt-1">
+                                Gérez le catalogue global de vos films, clips, publicités et autres médias.
+                            </p>
                         </div>
-                        <div className="bg-white rounded-xl shadow-md p-6 border flex-1 overflow-hidden">
+                        <div className="bg-surface rounded-xl shadow-sm p-4 sm:p-6 border border-border flex-1 overflow-hidden">
                             <MediaLibrary />
                         </div>
                     </div>
                 );
             default:
                 return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
                         <DashboardCard
                             title="Programmes"
                             description="Gérez la structure de votre grille hebdomadaire."
-                            icon="📅"
-                            color="blue"
+                            icon={IconCalendar}
+                            accent="border-primary"
                             onClick={() => setView('programs')}
                         />
                         <DashboardCard
                             title="Playlists"
                             description="Planifiez le contenu réel des émissions."
-                            icon="🎬"
-                            color="green"
+                            icon={IconClapperboard}
+                            accent="border-success"
                             onClick={() => setView('playlists')}
                         />
                         <DashboardCard
                             title="Utilisateurs"
                             description="Gérez les accès et les comptes utilisateurs."
-                            icon="👥"
-                            color="cyan"
+                            icon={IconUsers}
+                            accent="border-primary"
                             onClick={() => setView('users')}
                         />
                         <DashboardCard
                             title="Rôles & Droits"
                             description="Définissez les droits d'accès aux routes."
-                            icon="🔐"
-                            color="purple"
+                            icon={IconShield}
+                            accent="border-warning"
                             onClick={() => setView('roles')}
                         />
                         <DashboardCard
                             title="Médiathèque"
                             description="Accédez au catalogue des films et vidéos."
-                            icon="🎞️"
-                            color="orange"
+                            icon={IconFilm}
+                            accent="border-warning"
                             onClick={() => setView('mediatheque')}
                         />
                         <DashboardCard
                             title="Publicité"
                             description="Gérez les spots et les contrats clients."
-                            icon="📢"
-                            color="red"
+                            icon={IconMegaphone}
+                            accent="border-danger"
                         />
                     </div>
                 );
@@ -109,7 +120,7 @@ const App = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-100 font-sans overflow-hidden">
+        <div className="flex min-h-[100dvh] bg-canvas font-sans overflow-hidden">
             <Sidebar
                 currentView={view}
                 onViewChange={setView}
@@ -118,42 +129,30 @@ const App = () => {
                 onClose={() => setIsSidebarOpen(false)}
             />
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <Header
-                    title={getViewTitle()}
-                    user={user}
-                    onMenuClick={() => setIsSidebarOpen(true)}
-                />
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+                <Header title={getViewTitle()} user={user} onMenuClick={() => setIsSidebarOpen(true)} />
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-canvas app-main-pad-mobile">
                     {renderContent()}
                 </main>
             </div>
+            <BottomNav currentView={view} onViewChange={setView} />
         </div>
     );
 };
 
-const DashboardCard = ({ title, description, icon, color, onClick }) => {
-    const colors = {
-        blue: 'border-blue-500',
-        green: 'border-green-500',
-        purple: 'border-purple-500',
-        orange: 'border-orange-500',
-        cyan: 'border-cyan-500',
-        red: 'border-red-500',
-    };
-
-    return (
-        <div
-            onClick={onClick}
-            className={`bg-white p-6 rounded-lg shadow-sm border-t-4 ${colors[color]} hover:shadow-md transition cursor-pointer`}
-        >
-            <div className="text-3xl mb-4">{icon}</div>
-            <h2 className="text-xl font-bold mb-2 text-gray-800">{title}</h2>
-            <p className="text-gray-600 mb-4 text-sm">{description}</p>
-            <div className="text-blue-600 font-medium text-sm flex items-center">
-                Ouvrir <span className="ml-1">→</span>
-            </div>
+const DashboardCard = ({ title, description, icon: Icon, accent, onClick }) => (
+    <button
+        type="button"
+        onClick={onClick}
+        disabled={!onClick}
+        className={`text-left bg-surface p-5 rounded-xl shadow-sm border border-border border-t-4 ${accent} hover:shadow-md transition cursor-pointer disabled:opacity-60 disabled:cursor-default`}
+    >
+        <div className="mb-4 w-11 h-11 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+            <Icon size={22} />
         </div>
-    );
-};
+        <h2 className="text-lg font-bold mb-1.5 text-fg">{title}</h2>
+        <p className="text-muted mb-4 text-sm leading-relaxed">{description}</p>
+        {onClick && <span className="text-primary font-medium text-sm">Ouvrir →</span>}
+    </button>
+);
 
 export default App;

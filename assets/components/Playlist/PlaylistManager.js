@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../UI/Card';
 import Button from '../UI/Button';
 import PlaylistEditor from './PlaylistEditor';
 
@@ -16,8 +15,8 @@ const PlaylistManager = () => {
     const fetchDailySchedule = () => {
         setLoading(true);
         fetch(`/api/playlists/daily?date=${date}`)
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 setSlots(data);
                 setLoading(false);
             });
@@ -31,7 +30,7 @@ const PlaylistManager = () => {
 
     if (editingSlot) {
         return (
-            <div className="fixed inset-0 z-40 bg-white">
+            <div className="fixed inset-0 z-40 bg-surface">
                 <PlaylistEditor
                     slot={editingSlot}
                     date={date}
@@ -46,80 +45,129 @@ const PlaylistManager = () => {
     }
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-800">Planification des Playlists</h2>
-                <div className="flex items-center gap-4 bg-white p-2 rounded-lg shadow-sm border">
-                    <label className="text-sm font-medium text-gray-600">Date :</label>
+        <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl font-bold text-fg">Planification des Playlists</h2>
+                <div className="flex items-center gap-3 bg-surface p-2 rounded-xl shadow-sm border border-border min-h-11">
+                    <label className="text-sm font-medium text-muted">Date</label>
                     <input
                         type="date"
                         value={date}
-                        onChange={e => setDate(e.target.value)}
-                        className="outline-none text-blue-600 font-bold"
+                        onChange={(e) => setDate(e.target.value)}
+                        className="outline-none text-primary font-bold bg-surface text-fg"
                     />
                 </div>
             </div>
 
             {loading ? (
-                <div className="flex justify-center p-20 text-gray-400 italic">Chargement du planning...</div>
+                <div className="flex justify-center p-20 text-muted italic">Chargement du planning...</div>
             ) : (
-                <div className="grid grid-cols-1 gap-4">
-                    {slots.map((item, idx) => {
+                <div className="grid grid-cols-1 gap-3">
+                    {slots.map((item) => {
                         const { slot, playlist } = item;
                         const statusColors = {
-                            empty: 'border-gray-200 bg-gray-50',
-                            draft: 'border-orange-200 bg-orange-50',
-                            to_validate: 'border-blue-200 bg-blue-50',
-                            validated: 'border-green-200 bg-green-50'
+                            empty: 'border-border bg-surface-2',
+                            draft: 'border-warning/40 bg-warning-soft',
+                            to_validate: 'border-primary/40 bg-primary-soft',
+                            validated: 'border-success/40 bg-success-soft',
                         };
 
                         return (
-                            <div
+                            <button
                                 key={slot.id}
-                                className={`flex items-center p-4 border-2 rounded-xl transition hover:shadow-md cursor-pointer ${statusColors[playlist.status]}`}
+                                type="button"
+                                className={`flex flex-col sm:flex-row sm:items-center gap-3 p-4 border-2 rounded-xl transition hover:shadow-md text-left ${statusColors[playlist.status]}`}
                                 onClick={() => setEditingSlot(item)}
                             >
-                                <div className="w-24 text-center border-r pr-4 mr-6">
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Début</p>
-                                    <p className="text-xl font-black text-gray-800">{slot.startTime}</p>
+                                <div className="flex items-center gap-3 sm:w-auto">
+                                    <div className="w-20 text-center border-r border-border/60 pr-3">
+                                        <p className="text-[10px] font-bold text-muted uppercase">Début</p>
+                                        <p className="text-xl font-black text-fg font-mono">{slot.startTime}</p>
+                                    </div>
+                                    <div className="flex-1 sm:hidden min-w-0">
+                                        <h3 className="font-bold text-fg truncate">{slot.label}</h3>
+                                        <p className="text-[10px] text-muted uppercase">{slot.theme}</p>
+                                    </div>
+                                    <span
+                                        className={`sm:hidden inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase shrink-0 ${
+                                            playlist.status === 'validated'
+                                                ? 'bg-success-soft text-success'
+                                                : playlist.status === 'to_validate'
+                                                  ? 'bg-primary-soft text-primary'
+                                                  : playlist.status === 'draft'
+                                                    ? 'bg-warning-soft text-warning'
+                                                    : 'bg-surface text-muted'
+                                        }`}
+                                    >
+                                        {playlist.status === 'empty' ? 'Vide' : playlist.status.replace('_', ' ')}
+                                    </span>
                                 </div>
 
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <h3 className="font-bold text-gray-900 text-lg">{slot.label}</h3>
-                                        <span className="text-[10px] bg-white px-2 py-0.5 rounded border font-bold text-gray-500 uppercase">{slot.theme}</span>
+                                <div className="flex-1 hidden sm:block min-w-0">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                        <h3 className="font-bold text-fg text-lg">{slot.label}</h3>
+                                        <span className="text-[10px] bg-surface px-2 py-0.5 rounded border border-border font-bold text-muted uppercase">
+                                            {slot.theme}
+                                        </span>
                                     </div>
-                                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                                        <p>⏱️ Durée slot: {formatDuration(slot.duration)}</p>
-                                        <p>🎞️ {playlist.items.length} média(s)</p>
+                                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
+                                        <p>Durée slot: {formatDuration(slot.duration)}</p>
+                                        <p>{playlist.items.length} média(s)</p>
                                         <div className="flex items-center gap-1">
-                                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div className="w-20 h-2 bg-surface rounded-full overflow-hidden border border-border">
                                                 <div
-                                                    className={`h-full ${playlist.remainingDuration < 0 ? 'bg-red-500' : 'bg-green-500'}`}
-                                                    style={{ width: `${Math.min((playlist.totalDuration / slot.duration) * 100, 100)}%` }}
-                                                ></div>
+                                                    className={`h-full ${playlist.remainingDuration < 0 ? 'bg-danger' : 'bg-success'}`}
+                                                    style={{
+                                                        width: `${Math.min((playlist.totalDuration / slot.duration) * 100, 100)}%`,
+                                                    }}
+                                                />
                                             </div>
-                                            <span className={`text-[10px] font-bold ${playlist.remainingDuration < 0 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                {playlist.remainingDuration === 0 ? 'Complet' : (playlist.remainingDuration < 0 ? 'Trop long' : 'Incomplet')}
+                                            <span
+                                                className={`text-[10px] font-bold ${playlist.remainingDuration < 0 ? 'text-danger' : 'text-muted'}`}
+                                            >
+                                                {playlist.remainingDuration === 0
+                                                    ? 'Complet'
+                                                    : playlist.remainingDuration < 0
+                                                      ? 'Trop long'
+                                                      : 'Incomplet'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="text-right">
-                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                                        playlist.status === 'validated' ? 'bg-green-100 text-green-700' :
-                                        playlist.status === 'to_validate' ? 'bg-blue-100 text-blue-700' :
-                                        playlist.status === 'draft' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-500'
-                                    }`}>
+                                <div className="hidden sm:block text-right shrink-0">
+                                    <span
+                                        className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                                            playlist.status === 'validated'
+                                                ? 'bg-success-soft text-success'
+                                                : playlist.status === 'to_validate'
+                                                  ? 'bg-primary-soft text-primary'
+                                                  : playlist.status === 'draft'
+                                                    ? 'bg-warning-soft text-warning'
+                                                    : 'bg-surface text-muted'
+                                        }`}
+                                    >
                                         {playlist.status === 'empty' ? 'Vide' : playlist.status.replace('_', ' ')}
                                     </span>
                                 </div>
-                            </div>
+
+                                <div className="sm:hidden flex items-center justify-between text-xs text-muted pt-1 border-t border-border/50">
+                                    <span>{formatDuration(slot.duration)}</span>
+                                    <span>{playlist.items.length} média(s)</span>
+                                    <div className="w-16 h-1.5 bg-surface rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full ${playlist.remainingDuration < 0 ? 'bg-danger' : 'bg-success'}`}
+                                            style={{
+                                                width: `${Math.min((playlist.totalDuration / slot.duration) * 100, 100)}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </button>
                         );
                     })}
                     {slots.length === 0 && (
-                        <div className="text-center p-20 border-2 border-dashed rounded-2xl text-gray-400">
+                        <div className="text-center p-16 border-2 border-dashed border-border rounded-2xl text-muted">
                             Aucun créneau programmé pour ce jour dans la structure.
                         </div>
                     )}

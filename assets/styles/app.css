@@ -1,1 +1,138 @@
 @import "tailwindcss";
+
+/*
+ * Design tokens — change a theme by editing the variables below,
+ * or add a new [data-theme="…"] block. Components use semantic utilities
+ * (bg-canvas, bg-surface, bg-primary, text-fg, text-muted, border-border, …).
+ */
+@theme {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-fg: var(--sidebar-fg);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-overlay: var(--overlay);
+  --font-sans: "Segoe UI", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root,
+[data-theme="light"] {
+  --canvas: #e8eef5;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #dbeafe;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --sidebar: #1e293b;
+  --sidebar-fg: #f8fafc;
+  --sidebar-muted: #94a3b8;
+  --sidebar-hover: #334155;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --warning: #ea580c;
+  --warning-soft: #ffedd5;
+  --overlay: rgb(15 23 42 / 0.55);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --canvas: #0b1220;
+  --surface: #151d2e;
+  --surface-2: #1a2438;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-soft: #1e3a5f;
+  --fg: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #2a3548;
+  --sidebar: #0a0f1a;
+  --sidebar-fg: #f8fafc;
+  --sidebar-muted: #64748b;
+  --sidebar-hover: #1a2438;
+  --danger: #f87171;
+  --danger-soft: #3f1d1d;
+  --success: #4ade80;
+  --success-soft: #14532d;
+  --warning: #fb923c;
+  --warning-soft: #431407;
+  --overlay: rgb(0 0 0 / 0.65);
+  color-scheme: dark;
+}
+
+/* Optional brand skin — tweak these vars for FVA identity */
+[data-theme="brand"] {
+  --canvas: #e6f0f7;
+  --surface: #ffffff;
+  --surface-2: #edf5fb;
+  --primary: #0e7490;
+  --primary-hover: #0f766e;
+  --primary-soft: #cffafe;
+  --fg: #0c4a6e;
+  --muted: #547a8f;
+  --border: #c5d9e6;
+  --sidebar: #0c4a6e;
+  --sidebar-fg: #f0f9ff;
+  --sidebar-muted: #7dd3fc;
+  --sidebar-hover: #075985;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --success: #059669;
+  --success-soft: #d1fae5;
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+  --overlay: rgb(12 74 110 / 0.5);
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* App shell safe areas (notches / home indicator) */
+.app-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.app-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.app-main-pad-mobile {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .app-main-pad-mobile {
+    padding-bottom: 0;
+  }
+}
