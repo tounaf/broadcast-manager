@@ -7,6 +7,7 @@ import UserManagement from './UserManagement';
 import RoleManagement from './RoleManagement';
 import Profile from './Profile';
 import PlaylistManager from './Playlist/PlaylistManager';
+import MediaLibrary from './Playlist/MediaLibrary';
 
 const App = () => {
     const [user, setUser] = useState(window.user_data);
@@ -29,6 +30,18 @@ const App = () => {
                 return <RoleManagement />;
             case 'profile':
                 return <Profile user={user} />;
+            case 'mediatheque':
+                return (
+                    <div className="p-6 h-full flex flex-col">
+                        <div className="mb-4">
+                            <h2 className="text-xl font-bold text-gray-800">Gestion de la Médiathèque</h2>
+                            <p className="text-xs text-gray-500 mt-1">Gérez le catalogue global de vos films, clips, publicités et autres médias.</p>
+                        </div>
+                        <div className="bg-white rounded-xl shadow-md p-6 border flex-1 overflow-hidden">
+                            <MediaLibrary />
+                        </div>
+                    </div>
+                );
             default:
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
@@ -65,6 +78,7 @@ const App = () => {
                             description="Accédez au catalogue des films et vidéos."
                             icon="🎞️"
                             color="orange"
+                            onClick={() => setView('mediatheque')}
                         />
                         <DashboardCard
                             title="Publicité"
@@ -80,6 +94,7 @@ const App = () => {
     const getViewTitle = () => {
         const titles = {
             dashboard: 'Tableau de Bord',
+            mediatheque: 'Médiathèque',
             programs: 'Gestion des Programmes',
             playlists: 'Planification des Playlists',
             users: 'Gestion des Utilisateurs',

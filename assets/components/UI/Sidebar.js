@@ -3,6 +3,7 @@ import React from 'react';
 const Sidebar = ({ currentView, onViewChange, onLogout, isOpen, onClose }) => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+        { id: 'mediatheque', label: 'Médiathèque', icon: '🎞️' },
         { id: 'programs', label: 'Programmes', icon: '📅' },
         { id: 'playlists', label: 'Playlists', icon: '🎬' },
         { id: 'users', label: 'Utilisateurs', icon: '👥' },
