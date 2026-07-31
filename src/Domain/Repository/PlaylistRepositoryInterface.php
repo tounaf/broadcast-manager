@@ -15,5 +15,5 @@ interface PlaylistRepositoryInterface
     /**
      * @return int[]
      */
-    public function findBroadcastedMediaIdsBefore(\DateTimeImmutable $date): array;
+    public function findBroadcastedMediaIds(): array;
 }

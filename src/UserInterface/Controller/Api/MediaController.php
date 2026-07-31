@@ -25,8 +25,7 @@ class MediaController extends AbstractController
         $medias = $this->mediaRepository->findAll();
         $type = $request->query->get('type');
 
-        $today = new \DateTimeImmutable('today');
-        $broadcastedMediaIds = $this->playlistRepository->findBroadcastedMediaIdsBefore($today);
+        $broadcastedMediaIds = $this->playlistRepository->findBroadcastedMediaIds();
 
         $data = [];
         foreach ($medias as $media) {
