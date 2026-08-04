@@ -49,6 +49,43 @@ class ProgramSlotController extends AbstractController
         return $this->json($data);
     }
 
+    private function slotsOverlap(ProgramSlot $slotA, ProgramSlot $slotB): bool
+    {
+        if ($slotA->getId() !== null && $slotB->getId() !== null && $slotA->getId() === $slotB->getId()) {
+            return false;
+        }
+
+        // Determine the dates/days they apply to
+        $dateA = $slotA->getDate() ? $slotA->getDate()->format('Y-m-d') : null;
+        $dateB = $slotB->getDate() ? $slotB->getDate()->format('Y-m-d') : null;
+        $dayA = $slotA->getDayOfWeek();
+        $dayB = $slotB->getDayOfWeek();
+
+        $dayMatch = false;
+
+        if ($dateA !== null && $dateB !== null) {
+            // Both are specific dates
+            $dayMatch = ($dateA === $dateB);
+        } elseif ($dateA === null && $dateB === null) {
+            // Both are recurring weekly slots
+            $dayMatch = ($dayA === $dayB);
+        } else {
+            // One is specific, one is recurring
+            $dayMatch = ($dayA === $dayB);
+        }
+
+        if (!$dayMatch) {
+            return false;
+        }
+
+        $startA = $slotA->getStartTime()->format('H:i');
+        $endA = $slotA->getEndTime()->format('H:i');
+        $startB = $slotB->getStartTime()->format('H:i');
+        $endB = $slotB->getEndTime()->format('H:i');
+
+        return $startA < $endB && $endA > $startB;
+    }
+
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
@@ -62,6 +99,21 @@ class ProgramSlotController extends AbstractController
             $data['theme'],
             isset($data['date']) ? new \DateTimeImmutable($data['date']) : null
         );
+
+        // Check for overlap
+        $existingSlots = $this->repository->findAll();
+        foreach ($existingSlots as $existingSlot) {
+            if ($this->slotsOverlap($slot, $existingSlot)) {
+                return $this->json([
+                    'error' => sprintf(
+                        'Le programme chevauche "%s" (%s - %s)',
+                        $existingSlot->getLabel(),
+                        $existingSlot->getStartTime()->format('H:i'),
+                        $existingSlot->getEndTime()->format('H:i')
+                    )
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
 
         $this->repository->save($slot);
 
@@ -81,6 +133,14 @@ class ProgramSlotController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         
+        $originalDayOfWeek = $slot->getDayOfWeek();
+        $originalLabel = $slot->getLabel();
+        $originalStartTime = $slot->getStartTime();
+        $originalEndTime = $slot->getEndTime();
+        $originalTheme = $slot->getTheme();
+        $originalDate = $slot->getDate();
+        $originalIsValidated = $slot->isValidated();
+
         if (isset($data['dayOfWeek'])) $slot->setDayOfWeek($data['dayOfWeek']);
         if (isset($data['label'])) $slot->setLabel($data['label']);
         if (isset($data['startTime'])) $slot->setStartTime(new \DateTimeImmutable($data['startTime']));
@@ -88,6 +148,30 @@ class ProgramSlotController extends AbstractController
         if (isset($data['theme'])) $slot->setTheme($data['theme']);
         if (isset($data['date'])) $slot->setDate(new \DateTimeImmutable($data['date']));
         if (isset($data['isValidated'])) $data['isValidated'] ? $slot->validate() : $slot->invalidate();
+
+        // Check for overlap
+        $existingSlots = $this->repository->findAll();
+        foreach ($existingSlots as $existingSlot) {
+            if ($this->slotsOverlap($slot, $existingSlot)) {
+                // Revert changes
+                $slot->setDayOfWeek($originalDayOfWeek);
+                $slot->setLabel($originalLabel);
+                $slot->setStartTime($originalStartTime);
+                $slot->setEndTime($originalEndTime);
+                $slot->setTheme($originalTheme);
+                $slot->setDate($originalDate);
+                $originalIsValidated ? $slot->validate() : $slot->invalidate();
+
+                return $this->json([
+                    'error' => sprintf(
+                        'Le programme chevauche "%s" (%s - %s)',
+                        $existingSlot->getLabel(),
+                        $existingSlot->getStartTime()->format('H:i'),
+                        $existingSlot->getEndTime()->format('H:i')
+                    )
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
 
         $this->repository->save($slot);
 
