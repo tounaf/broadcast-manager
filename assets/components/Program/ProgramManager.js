@@ -191,6 +191,14 @@ const ProgramManager = () => {
     const [playlistLoading, setPlaylistLoading] = useState(false);
     const [playlistInfo, setPlaylistInfo] = useState(null);
 
+    // Duplication states
+    const [isDayDuplicateModalOpen, setIsDayDuplicateModalOpen] = useState(false);
+    const [dayDuplicateSource, setDayDuplicateSource] = useState(toISODate(new Date()));
+    const [dayDuplicateTarget, setDayDuplicateTarget] = useState(toISODate(new Date()));
+
+    const [isSingleDuplicateModalOpen, setIsSingleDuplicateModalOpen] = useState(false);
+    const [singleDuplicateTarget, setSingleDuplicateTarget] = useState(toISODate(new Date()));
+
     const weekDates = getWeekDates(selectedDate);
 
     useEffect(() => {
@@ -371,6 +379,60 @@ const ProgramManager = () => {
         }
     };
 
+    const handleDuplicateDay = async () => {
+        if (dayDuplicateSource === dayDuplicateTarget) {
+            alert('La date source et la date cible doivent être différentes.');
+            return;
+        }
+        try {
+            const response = await fetch('/api/programs/duplicate-day', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sourceDate: dayDuplicateSource,
+                    targetDate: dayDuplicateTarget
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || 'Erreur lors de la duplication de la journée.');
+            }
+
+            const resData = await response.json();
+            alert(resData.message);
+            setIsDayDuplicateModalOpen(false);
+            fetchData();
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const handleDuplicateSingle = async () => {
+        try {
+            const response = await fetch(`/api/programs/${currentSlot.id}/duplicate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    targetDate: singleDuplicateTarget
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || 'Erreur lors de la duplication.');
+            }
+
+            const resData = await response.json();
+            alert(resData.message);
+            setIsSingleDuplicateModalOpen(false);
+            setIsModalOpen(false);
+            fetchData();
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     const getSlotStyle = (slot) => {
         const [startH, startM] = slot.startTime.split(':').map(n => parseInt(n, 10));
         const [endH, endM] = slot.endTime.split(':').map(n => parseInt(n, 10));
@@ -499,6 +561,17 @@ const ProgramManager = () => {
                         }}
                     >
                         + Nouveau Créneau
+                    </Button>
+
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            setDayDuplicateSource(selectedDate);
+                            setDayDuplicateTarget(selectedDate);
+                            setIsDayDuplicateModalOpen(true);
+                        }}
+                    >
+                        📁 Dupliquer la journée
                     </Button>
                 </div>
             </div>
@@ -684,9 +757,17 @@ const ProgramManager = () => {
                 title={currentSlot.id ? 'Modifier le Créneau' : 'Nouveau Créneau'}
                 footer={
                     <div className="flex justify-between w-full">
-                        {currentSlot.id ? (
-                            <Button variant="danger" onClick={() => handleDelete(currentSlot.id)}>Supprimer</Button>
-                        ) : <div></div>}
+                        <div className="flex space-x-2">
+                            {currentSlot.id && (
+                                <>
+                                    <Button variant="danger" onClick={() => handleDelete(currentSlot.id)}>Supprimer</Button>
+                                    <Button variant="outline" onClick={() => {
+                                        setSingleDuplicateTarget(currentSlot.date || selectedDate);
+                                        setIsSingleDuplicateModalOpen(true);
+                                    }}>📑 Dupliquer</Button>
+                                </>
+                            )}
+                        </div>
                         <div className="flex space-x-3">
                             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Annuler</Button>
                             <Button onClick={handleSave}>Enregistrer</Button>
@@ -840,6 +921,73 @@ const ProgramManager = () => {
                             )}
                         </div>
                     )}
+                </div>
+            </Modal>
+
+            {/* Day Duplication Modal */}
+            <Modal
+                isOpen={isDayDuplicateModalOpen}
+                onClose={() => setIsDayDuplicateModalOpen(false)}
+                title="Dupliquer une journée complète de programmes"
+                footer={
+                    <div className="flex justify-end space-x-3 w-full">
+                        <Button variant="outline" onClick={() => setIsDayDuplicateModalOpen(false)}>Annuler</Button>
+                        <Button onClick={handleDuplicateDay}>Confirmer la duplication</Button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
+                    <p className="text-sm text-gray-500">
+                        Cette action va copier l'ensemble de la structure des programmes (créneaux horaires et thématiques) d'un jour vers un autre jour.
+                        <strong> Les playlists ne seront pas copiées.</strong>
+                    </p>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date source (Copier depuis)</label>
+                        <input
+                            type="date"
+                            value={dayDuplicateSource}
+                            onChange={e => setDayDuplicateSource(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date cible (Copier vers)</label>
+                        <input
+                            type="date"
+                            value={dayDuplicateTarget}
+                            onChange={e => setDayDuplicateTarget(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Single Duplication Modal */}
+            <Modal
+                isOpen={isSingleDuplicateModalOpen}
+                onClose={() => setIsSingleDuplicateModalOpen(false)}
+                title="Dupliquer le programme"
+                footer={
+                    <div className="flex justify-end space-x-3 w-full">
+                        <Button variant="outline" onClick={() => setIsSingleDuplicateModalOpen(false)}>Annuler</Button>
+                        <Button onClick={handleDuplicateSingle}>Confirmer</Button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
+                    <p className="text-sm text-gray-500">
+                        Copier ce programme "{currentSlot.label || currentSlot.theme}" vers une autre date.
+                        <strong> La playlist associée ne sera pas copiée.</strong>
+                    </p>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date cible</label>
+                        <input
+                            type="date"
+                            value={singleDuplicateTarget}
+                            onChange={e => setSingleDuplicateTarget(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
                 </div>
             </Modal>
         </div>
