@@ -108,29 +108,6 @@ const getSlotDuration = (startTime, endTime) => {
     return duration;
 };
 
-const checkFrontendOverlap = (slotA, slotB) => {
-    if (slotA.id === slotB.id) return false;
-
-    // Days / dates match check
-    const dateA = slotA.date || null;
-    const dateB = slotB.date || null;
-    const dayA = slotA.dayOfWeek;
-    const dayB = slotB.dayOfWeek;
-
-    let dayMatch = false;
-    if (dateA && dateB) {
-        dayMatch = (dateA === dateB);
-    } else if (!dateA && !dateB) {
-        dayMatch = (dayA === dayB);
-    } else {
-        dayMatch = (dayA === dayB);
-    }
-
-    if (!dayMatch) return false;
-
-    return slotA.startTime < slotB.endTime && slotA.endTime > slotB.startTime;
-};
-
 const getWeekDates = (dateStr) => {
     const current = new Date(dateStr);
     const day = current.getDay();
@@ -213,6 +190,14 @@ const ProgramManager = () => {
     });
     const [playlistLoading, setPlaylistLoading] = useState(false);
     const [playlistInfo, setPlaylistInfo] = useState(null);
+
+    // Duplication states
+    const [isDayDuplicateModalOpen, setIsDayDuplicateModalOpen] = useState(false);
+    const [dayDuplicateSource, setDayDuplicateSource] = useState(toISODate(new Date()));
+    const [dayDuplicateTarget, setDayDuplicateTarget] = useState(toISODate(new Date()));
+
+    const [isSingleDuplicateModalOpen, setIsSingleDuplicateModalOpen] = useState(false);
+    const [singleDuplicateTarget, setSingleDuplicateTarget] = useState(toISODate(new Date()));
 
     const weekDates = getWeekDates(selectedDate);
 
@@ -394,99 +379,57 @@ const ProgramManager = () => {
         }
     };
 
-    const handleDragStart = (e, slot) => {
-        e.dataTransfer.setData('application/json', JSON.stringify(slot));
-        e.dataTransfer.effectAllowed = 'move';
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
-
-    const handleDropOnDayColumn = async (e, targetDayOfWeek, targetDateOfCurrentDay) => {
-        e.preventDefault();
+    const handleDuplicateDay = async () => {
+        if (dayDuplicateSource === dayDuplicateTarget) {
+            alert('La date source et la date cible doivent être différentes.');
+            return;
+        }
         try {
-            const slotData = JSON.parse(e.dataTransfer.getData('application/json'));
-            if (!slotData || !slotData.id) return;
-
-            // Compute new start time based on cursor position relative to the column height
-            const rect = e.currentTarget.getBoundingClientRect();
-            const relativeY = e.clientY - rect.top;
-
-            // Total height of the 24 hours column is 960px (24 hours * 40px)
-            const minutes = Math.round((relativeY / 960) * 1440);
-            // Snap to 15 minute increments
-            const snappedMinutes = Math.round(minutes / 15) * 15;
-
-            const originalDurationMins = getSlotDuration(slotData.startTime, slotData.endTime) / 60;
-
-            const startHour = Math.floor(snappedMinutes / 60);
-            const startMin = snappedMinutes % 60;
-
-            const endMins = snappedMinutes + originalDurationMins;
-            const endHour = Math.floor(endMins / 60) % 24;
-            const endMin = endMins % 60;
-
-            const formatTime = (h, m) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-
-            const newStartTime = formatTime(startHour, startMin);
-            const newEndTime = formatTime(endHour, endMin);
-            const targetDateStr = targetDateOfCurrentDay ? toISODate(targetDateOfCurrentDay) : null;
-
-            const payload = {
-                ...slotData,
-                dayOfWeek: targetDayOfWeek,
-                startTime: newStartTime,
-                endTime: newEndTime,
-                date: targetDateStr
-            };
-
-            const response = await fetch(`/api/programs/${slotData.id}`, {
-                method: 'PUT',
+            const response = await fetch('/api/programs/duplicate-day', {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    sourceDate: dayDuplicateSource,
+                    targetDate: dayDuplicateTarget
+                })
             });
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || 'Impossible de déplacer ce créneau.');
+                throw new Error(errData.error || 'Erreur lors de la duplication de la journée.');
             }
 
+            const resData = await response.json();
+            alert(resData.message);
+            setIsDayDuplicateModalOpen(false);
             fetchData();
         } catch (error) {
-            alert(`Erreur de déplacement: ${error.message}`);
+            alert(error.message);
         }
     };
 
-    const handleDropOnMonthCell = async (e, targetDateStr) => {
-        e.preventDefault();
+    const handleDuplicateSingle = async () => {
         try {
-            const slotData = JSON.parse(e.dataTransfer.getData('application/json'));
-            if (!slotData || !slotData.id) return;
-
-            const targetDayOfWeek = getFrenchDayFromDateStr(targetDateStr);
-
-            const payload = {
-                ...slotData,
-                dayOfWeek: targetDayOfWeek,
-                date: targetDateStr
-            };
-
-            const response = await fetch(`/api/programs/${slotData.id}`, {
-                method: 'PUT',
+            const response = await fetch(`/api/programs/${currentSlot.id}/duplicate`, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    targetDate: singleDuplicateTarget
+                })
             });
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || 'Impossible de déplacer ce créneau.');
+                throw new Error(errData.error || 'Erreur lors de la duplication.');
             }
 
+            const resData = await response.json();
+            alert(resData.message);
+            setIsSingleDuplicateModalOpen(false);
+            setIsModalOpen(false);
             fetchData();
         } catch (error) {
-            alert(`Erreur de déplacement: ${error.message}`);
+            alert(error.message);
         }
     };
 
@@ -527,40 +470,11 @@ const ProgramManager = () => {
         return <div className="flex items-center justify-center p-12 text-muted">Chargement...</div>;
     }
 
-    const getOverlappingSlots = () => {
-        const overlapping = new Set();
-        for (let i = 0; i < slots.length; i++) {
-            for (let j = i + 1; j < slots.length; j++) {
-                if (checkFrontendOverlap(slots[i], slots[j])) {
-                    overlapping.add(slots[i].id);
-                    overlapping.add(slots[j].id);
-                }
-            }
-        }
-        return overlapping;
-    };
-
-    const overlappingSlotIds = getOverlappingSlots();
-
     const viewTitle =
         viewMode === 'day' ? 'Vue Journalière' : viewMode === 'week' ? 'Grille Hebdomadaire' : 'Grille Mensuelle';
 
     return (
         <div className="p-4 sm:p-6">
-            {overlappingSlotIds.size > 0 && (
-                <div className="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
-                        <div>
-                            <p className="font-bold">Attention : Chevauchement détecté</p>
-                            <p className="text-xs">Certains créneaux horaires de diffusion se superposent sur la même journée ou le même jour de récurrence.</p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-4 sm:mb-6">
                 <div>
                     <h2 className="text-xl font-bold text-fg">{viewTitle}</h2>
@@ -648,6 +562,17 @@ const ProgramManager = () => {
                     >
                         + Nouveau Créneau
                     </Button>
+
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            setDayDuplicateSource(selectedDate);
+                            setDayDuplicateTarget(selectedDate);
+                            setIsDayDuplicateModalOpen(true);
+                        }}
+                    >
+                        📁 Dupliquer la journée
+                    </Button>
                 </div>
             </div>
 
@@ -661,7 +586,6 @@ const ProgramManager = () => {
                         )}
                         {daySlots.map((slot) => {
                             const theme = themes.find((t) => t.label === slot.theme);
-                            const isOverlapping = overlappingSlotIds.has(slot.id);
                             return (
                                 <button
                                     key={slot.id}
@@ -670,28 +594,19 @@ const ProgramManager = () => {
                                         setCurrentSlot({ ...slot, themeId: theme?.id });
                                         setIsModalOpen(true);
                                     }}
-                                    className={`w-full text-left flex gap-3 p-3 rounded-xl border bg-surface-2 hover:shadow-md transition active:scale-[0.99] ${
-                                        isOverlapping ? 'border-red-500 ring-2 ring-red-500/20 animate-pulse-slow' : 'border-border'
-                                    }`}
+                                    className="w-full text-left flex gap-3 p-3 rounded-xl border border-border bg-surface-2 hover:shadow-md transition active:scale-[0.99]"
                                 >
                                     <div
-                                        className="w-1.5 self-stretch rounded-full shrink-0 animate-pulse"
+                                        className="w-1.5 self-stretch rounded-full shrink-0"
                                         style={{ backgroundColor: theme ? theme.color : '#94a3b8' }}
                                     />
                                     <div className="w-16 shrink-0 text-center border-r border-border pr-2">
-                                        <p className="text-[10px] font-bold text-muted uppercase flex items-center justify-center gap-1">
-                                            {isOverlapping && (
-                                                <span className="text-red-500 font-bold" title="Chevauchement">⚠️</span>
-                                            )}
-                                            Début
-                                        </p>
+                                        <p className="text-[10px] font-bold text-muted uppercase">Début</p>
                                         <p className="text-lg font-black text-fg font-mono leading-tight">{slot.startTime}</p>
                                         <p className="text-[10px] text-muted font-mono mt-1">{slot.endTime}</p>
                                     </div>
                                     <div className="flex-1 min-w-0 py-0.5">
-                                        <h3 className="font-bold text-fg truncate flex items-center gap-2">
-                                            {slot.label || slot.theme}
-                                        </h3>
+                                        <h3 className="font-bold text-fg truncate">{slot.label || slot.theme}</h3>
                                         <p className="text-xs text-muted mt-0.5">{slot.theme}</p>
                                     </div>
                                 </button>
@@ -735,8 +650,6 @@ const ProgramManager = () => {
                                             });
                                             setIsModalOpen(true);
                                         }}
-                                        onDragOver={handleDragOver}
-                                        onDrop={(e) => handleDropOnMonthCell(e, dStr)}
                                         className={`border-r border-b p-2 min-h-[90px] flex flex-col hover:bg-surface-2 cursor-pointer transition-colors ${
                                             isCurrentMonth ? 'bg-surface' : 'bg-surface-2/50 text-muted'
                                         } ${isToday ? 'ring-2 ring-primary ring-inset' : ''}`}
@@ -757,25 +670,20 @@ const ProgramManager = () => {
                                         <div className="flex-1 overflow-y-auto space-y-1 max-h-[80px] pr-0.5" onClick={e => e.stopPropagation()}>
                                             {cellSlots.map(slot => {
                                                 const theme = themes.find(t => t.label === slot.theme);
-                                                const isOverlapping = overlappingSlotIds.has(slot.id);
                                                 return (
                                                     <div
                                                         key={slot.id}
-                                                        draggable={true}
-                                                        onDragStart={(e) => handleDragStart(e, slot)}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             const slotTheme = themes.find(t => t.label === slot.theme);
                                                             setCurrentSlot({ ...slot, themeId: slotTheme?.id });
                                                             setIsModalOpen(true);
                                                         }}
-                                                        className={`rounded px-1.5 py-0.5 text-[10px] text-white font-semibold truncate hover:brightness-110 shadow-sm cursor-grab active:cursor-grabbing ${
-                                                            isOverlapping ? 'border-2 border-red-500 animate-pulse' : ''
-                                                        }`}
+                                                        className="rounded px-1.5 py-0.5 text-[10px] text-white font-semibold truncate hover:brightness-110 shadow-sm"
                                                         style={{ backgroundColor: theme ? theme.color : '#94a3b8' }}
-                                                        title={`${slot.label || slot.theme} (${slot.startTime}-${slot.endTime})${isOverlapping ? ' - CHEVAUCHEMENT' : ''}`}
+                                                        title={`${slot.label || slot.theme} (${slot.startTime}-${slot.endTime})`}
                                                     >
-                                                        {isOverlapping && '⚠️ '}{slot.label || slot.theme}
+                                                        {slot.label || slot.theme}
                                                     </div>
                                                 );
                                             })}
@@ -814,42 +722,27 @@ const ProgramManager = () => {
                             {DAYS.map((day, idx) => {
                                 const currentDayDate = weekDates[idx];
                                 return (
-                                    <div
-                                        key={day}
-                                        className="border-r last:border-r-0 relative group"
-                                        onDragOver={handleDragOver}
-                                        onDrop={(e) => handleDropOnDayColumn(e, day, currentDayDate)}
-                                    >
+                                    <div key={day} className="border-r last:border-r-0 relative group">
                                         {HOURS.map(h => (
                                             <div key={h} className="h-[40px] border-b border-border/50 group-hover:bg-surface-2 transition-colors"></div>
                                         ))}
 
-                                        {currentDayDate && getSlotsForDate(currentDayDate).map(slot => {
-                                            const isOverlapping = overlappingSlotIds.has(slot.id);
-                                            return (
-                                                <div
-                                                    key={slot.id}
-                                                    draggable={true}
-                                                    onDragStart={(e) => handleDragStart(e, slot)}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        const theme = themes.find(t => t.label === slot.theme);
-                                                        setCurrentSlot({ ...slot, themeId: theme?.id });
-                                                        setIsModalOpen(true);
-                                                    }}
-                                                    className={`absolute left-1 right-1 rounded-lg p-2 text-[11px] text-white font-bold cursor-grab active:cursor-grabbing shadow-sm hover:brightness-110 hover:scale-[1.02] transition-all z-10 overflow-hidden ring-1 ring-white/20 ${
-                                                        isOverlapping ? 'border-2 border-red-500 ring-2 ring-red-500/50 animate-pulse' : ''
-                                                    }`}
-                                                    style={getSlotStyle(slot)}
-                                                >
-                                                    <div className="truncate drop-shadow-sm flex items-center gap-1">
-                                                        {isOverlapping && <span>⚠️</span>}
-                                                        {slot.label || slot.theme}
-                                                    </div>
-                                                    <div className="opacity-70 text-[9px] font-mono">{slot.startTime} - {slot.endTime}</div>
-                                                </div>
-                                            );
-                                        })}
+                                        {currentDayDate && getSlotsForDate(currentDayDate).map(slot => (
+                                            <div
+                                                key={slot.id}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const theme = themes.find(t => t.label === slot.theme);
+                                                    setCurrentSlot({ ...slot, themeId: theme?.id });
+                                                    setIsModalOpen(true);
+                                                }}
+                                                className="absolute left-1 right-1 rounded-lg p-2 text-[11px] text-white font-bold cursor-pointer shadow-sm hover:brightness-110 hover:scale-[1.02] transition-all z-10 overflow-hidden ring-1 ring-white/20"
+                                                style={getSlotStyle(slot)}
+                                            >
+                                                <div className="truncate drop-shadow-sm">{slot.label || slot.theme}</div>
+                                                <div className="opacity-70 text-[9px] font-mono">{slot.startTime} - {slot.endTime}</div>
+                                            </div>
+                                        ))}
                                     </div>
                                 );
                             })}
@@ -864,9 +757,17 @@ const ProgramManager = () => {
                 title={currentSlot.id ? 'Modifier le Créneau' : 'Nouveau Créneau'}
                 footer={
                     <div className="flex justify-between w-full">
-                        {currentSlot.id ? (
-                            <Button variant="danger" onClick={() => handleDelete(currentSlot.id)}>Supprimer</Button>
-                        ) : <div></div>}
+                        <div className="flex space-x-2">
+                            {currentSlot.id && (
+                                <>
+                                    <Button variant="danger" onClick={() => handleDelete(currentSlot.id)}>Supprimer</Button>
+                                    <Button variant="outline" onClick={() => {
+                                        setSingleDuplicateTarget(currentSlot.date || selectedDate);
+                                        setIsSingleDuplicateModalOpen(true);
+                                    }}>📑 Dupliquer</Button>
+                                </>
+                            )}
+                        </div>
                         <div className="flex space-x-3">
                             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Annuler</Button>
                             <Button onClick={handleSave}>Enregistrer</Button>
@@ -1020,6 +921,73 @@ const ProgramManager = () => {
                             )}
                         </div>
                     )}
+                </div>
+            </Modal>
+
+            {/* Day Duplication Modal */}
+            <Modal
+                isOpen={isDayDuplicateModalOpen}
+                onClose={() => setIsDayDuplicateModalOpen(false)}
+                title="Dupliquer une journée complète de programmes"
+                footer={
+                    <div className="flex justify-end space-x-3 w-full">
+                        <Button variant="outline" onClick={() => setIsDayDuplicateModalOpen(false)}>Annuler</Button>
+                        <Button onClick={handleDuplicateDay}>Confirmer la duplication</Button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
+                    <p className="text-sm text-gray-500">
+                        Cette action va copier l'ensemble de la structure des programmes (créneaux horaires et thématiques) d'un jour vers un autre jour.
+                        <strong> Les playlists ne seront pas copiées.</strong>
+                    </p>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date source (Copier depuis)</label>
+                        <input
+                            type="date"
+                            value={dayDuplicateSource}
+                            onChange={e => setDayDuplicateSource(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date cible (Copier vers)</label>
+                        <input
+                            type="date"
+                            value={dayDuplicateTarget}
+                            onChange={e => setDayDuplicateTarget(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Single Duplication Modal */}
+            <Modal
+                isOpen={isSingleDuplicateModalOpen}
+                onClose={() => setIsSingleDuplicateModalOpen(false)}
+                title="Dupliquer le programme"
+                footer={
+                    <div className="flex justify-end space-x-3 w-full">
+                        <Button variant="outline" onClick={() => setIsSingleDuplicateModalOpen(false)}>Annuler</Button>
+                        <Button onClick={handleDuplicateSingle}>Confirmer</Button>
+                    </div>
+                }
+            >
+                <div className="space-y-4">
+                    <p className="text-sm text-gray-500">
+                        Copier ce programme "{currentSlot.label || currentSlot.theme}" vers une autre date.
+                        <strong> La playlist associée ne sera pas copiée.</strong>
+                    </p>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date cible</label>
+                        <input
+                            type="date"
+                            value={singleDuplicateTarget}
+                            onChange={e => setSingleDuplicateTarget(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        />
+                    </div>
                 </div>
             </Modal>
         </div>
